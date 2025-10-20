@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/auth'
 import * as api from '../api'
 import { getImageUrl } from '../utils/image'
+import { useAlert } from '../components/AlertProvider'
 
 export default function ArticlesList() {
   const [articles, setArticles] = useState([])
@@ -15,6 +16,7 @@ export default function ArticlesList() {
     dateTo: ''
   })
   const navigate = useNavigate()
+  const alert = useAlert()
 
   useEffect(() => {
     if (!getToken()) {
@@ -50,14 +52,15 @@ export default function ArticlesList() {
   }
 
   const handleDelete = async (id, title) => {
-    if (!confirm(`Are you sure you want to delete "${title}"?`)) return
-    
+    const confirmed = await alert.confirm(`Are you sure you want to delete "${title}"?`)
+    if (!confirmed) return
+
     try {
       await api.deleteArticle(id)
-      alert('Article deleted successfully!')
+      await alert.alert('Article deleted successfully!')
       loadData()
     } catch (error) {
-      alert('Error deleting article: ' + error.message)
+      await alert.alert('Error deleting article: ' + error.message)
     }
   }
 

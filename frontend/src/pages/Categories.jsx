@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import api from '../api'
+import { useAlert } from '../components/AlertProvider'
 
 export default function Categories() {
   const [cats, setCats] = useState([])
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
+  const alert = useAlert()
 
   useEffect(()=>{ api.listCategories().then(r=>setCats(r)).catch(()=>setCats([])) }, [])
 
   async function onCreate(e){
     e.preventDefault()
-    try{ await api.createCategory({name, slug}); setName(''); setSlug(''); const r=await api.listCategories(); setCats(r)}catch(e){alert('create failed')}
+    try{
+      await api.createCategory({name, slug}); setName(''); setSlug(''); const r=await api.listCategories(); setCats(r)
+    }catch(e){
+      await alert.alert('Create failed: ' + (e.message||e))
+    }
   }
 
   return (

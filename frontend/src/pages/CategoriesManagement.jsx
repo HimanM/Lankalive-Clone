@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/auth'
 import * as api from '../api'
+import { useAlert } from '../components/AlertProvider'
 
 export default function CategoriesManagement() {
   const [categories, setCategories] = useState([])
@@ -12,6 +13,7 @@ export default function CategoriesManagement() {
   const [formData, setFormData] = useState({ name: '', slug: '' })
   const [editingId, setEditingId] = useState(null)
   const navigate = useNavigate()
+  const alert = useAlert()
 
   useEffect(() => {
     if (!getToken()) {
@@ -67,12 +69,13 @@ export default function CategoriesManagement() {
       setEditingId(null)
       loadCategories()
     } catch (e) {
-      alert('Error: ' + (e.message || e))
+      await alert.alert('Error: ' + (e.message || e))
     }
   }
 
   async function handleDelete(categoryId) {
-    if (!confirm('Delete this category? This cannot be undone.')) return
+    const ok = await alert.confirm('Delete this category? This cannot be undone.')
+    if (!ok) return
     try {
       await api.deleteCategory(categoryId)
       loadCategories()
@@ -81,7 +84,7 @@ export default function CategoriesManagement() {
         setRecentArticles([])
       }
     } catch (e) {
-      alert('Error: ' + (e.message || e))
+      await alert.alert('Error: ' + (e.message || e))
     }
   }
 

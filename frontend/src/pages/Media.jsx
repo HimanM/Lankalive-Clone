@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import api from '../api'
 import { getImageUrl } from '../utils/image'
+import { useAlert } from '../components/AlertProvider'
 
 export default function Media(){
   const [list, setList] = useState([])
@@ -14,6 +15,7 @@ export default function Media(){
     credit: ''
   })
   const [deleteModal, setDeleteModal] = useState(null) // { media, usageInfo }
+  const alert = useAlert()
 
   async function load(q=''){
     try{
@@ -28,15 +30,17 @@ export default function Media(){
 
   async function onUpload(e){
     e.preventDefault();
-    if(!file) return alert('select file')
+    if(!file) return await alert.alert('Select a file to upload')
     setLoading(true)
     try{
       const result = await api.uploadMedia(file, metadata)
       setFile(null)
       setMetadata({ alt_text: '', caption: '', credit: '' })
+      await alert.alert('Upload successful')
       setMessage({text: 'Upload successful', meta: result})
       await load(q)
     }catch(e){
+      await alert.alert('Upload failed: ' + (e.message||e))
       setMessage({text: 'Upload failed: ' + (e.message||e)})
     }finally{ setLoading(false) }
   }
@@ -47,6 +51,7 @@ export default function Media(){
       const usageInfo = await api.checkMediaUsage(media.id)
       setDeleteModal({ media, usageInfo })
     } catch(e) {
+      await alert.alert('Error checking media usage: ' + (e.message||e))
       setMessage({text: 'Error checking media usage: ' + (e.message||e)})
     } finally {
       setLoading(false)
@@ -58,10 +63,12 @@ export default function Media(){
     setLoading(true)
     try {
       await api.deleteMedia(deleteModal.media.id)
+      await alert.alert(`✓ Media "${deleteModal.media.file_name}" deleted successfully`)
       setMessage({text: `✓ Media "${deleteModal.media.file_name}" deleted successfully`})
       setDeleteModal(null)
       await load(q)
     } catch(e) {
+      await alert.alert('Delete failed: ' + (e.message||e))
       setMessage({text: 'Delete failed: ' + (e.message||e)})
     } finally {
       setLoading(false)
