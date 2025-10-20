@@ -17,9 +17,13 @@ export default function Media(){
 
   async function load(q=''){
     try{
-      const list = await api.listMedia({ q }).catch(() => [])
+      const list = await api.listMedia({ q })
       setList(list)
-    }catch(e){ setList([]) }
+    }catch(e){ 
+      console.error('Error loading media:', e)
+      setList([])
+      setMessage({ text: 'Error loading media: ' + (e.message || e) })
+    }
   }
 
   useEffect(()=>{ load() }, [])
