@@ -250,13 +250,7 @@ FLASK_ENV=production
 SECRET_KEY=<generate-strong-key>
 JWT_SECRET=<generate-strong-key>
 POSTGRES_PASSWORD=<strong-password>
-VITE_API_BASE=https://yourdomain.com
 ```
-
-**Important:** 
-- Use `https://` if you have SSL/TLS (Certbot)
-- Use `http://` only for local development
-- Don't include port numbers if using Nginx reverse proxy
 
 3. Generate secure keys:
 ```bash
@@ -269,42 +263,49 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 
 4. Build and deploy:
 ```bash
-docker-compose build
-docker-compose up -d
+docker compose build
+docker compose up -d
 ```
 
 5. Verify deployment:
 ```bash
-docker-compose ps
-docker-compose logs -f
+# Check containers
+docker compose ps
+
+# Test backend
+curl http://localhost:8000/api/health
+
+# Test through frontend proxy
+curl http://localhost:49155/api/articles
 ```
 
 6. Access application:
-- http://yourdomain.com:8080 (or http://your-vps-ip:8080)
+- **Frontend:** http://your-vps-ip:49155
+- **Backend API:** http://your-vps-ip:8000 (for testing)
 
-### Reverse Proxy Setup (Optional)
+### Production Features
 
-To serve on standard ports (80/443), configure Nginx reverse proxy:
+- **Gunicorn WSGI Server:** 4 worker processes for production performance
+- **Nginx Proxy:** Frontend Nginx proxies `/api/` and `/static/` to backend
+- **No CORS Issues:** All requests are same-origin
+- **Docker Volumes:** Database and media uploads persist across deployments
 
-```nginx
-server {
-    listen 80;
-    server_name yourdomain.com;
+### Testing Deployment
 
-    location / {
-        proxy_pass http://localhost:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-Then use Certbot for SSL:
 ```bash
-sudo certbot --nginx -d yourdomain.com
+# 1. Check all services are up
+docker compose ps
+
+# 2. View logs
+docker compose logs -f
+
+# 3. Test individual services
+docker compose logs backend -f
+docker compose logs frontend -f
+docker compose logs postgres -f
+
+# 4. Test API endpoint
+curl http://localhost:49155/api/articles
 ```
 
 ## Project Structure
