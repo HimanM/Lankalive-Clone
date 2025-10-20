@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import useScrollToTop from '../hooks/useScrollToTop'
 import { useParams } from 'react-router-dom'
 import * as api from '../api'
 import ArticleCard from '../components/ArticleCard'
@@ -6,6 +7,7 @@ import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
 
 export default function CategoryPage() {
+  useScrollToTop()
   const { slug } = useParams()
   const [category, setCategory] = useState(null)
   const [articles, setArticles] = useState([])

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import useScrollToTop from '../hooks/useScrollToTop'
 import ArticleCard from '../components/ArticleCard'
 import api from '../api'
 import { getImageUrl } from '../utils/image'
 
 export default function Home() {
+  useScrollToTop()
   const [articles, setArticles] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import useScrollToTop from '../hooks/useScrollToTop'
 import * as api from '../api'
 import ArticleCard from '../components/ArticleCard'
 import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
 
 export default function LatestNews() {
+  useScrollToTop()
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
