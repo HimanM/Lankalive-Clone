@@ -235,7 +235,7 @@ export default function Media(){
             </div>
           ))}
         </div>
-      </div>
+        </div>
 
       {/* Delete Confirmation Modal */}
       {deleteModal && (
@@ -296,46 +296,29 @@ export default function Media(){
               </>
             )}
           </div>
-
-          {/* Pagination Controls */}
-          <div className="flex items-center justify-center gap-2 mt-8">
-            <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Previous
-            </button>
-            <span className="px-4 py-2 text-gray-700">Page {currentPage}</span>
-            <button
-              onClick={() => setCurrentPage(p => p + 1)}
-              disabled={list.length < imagesPerPage}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Next
-            </button>
-          </div>
-
-          {/* Pagination Controls */}
-          <div className="flex items-center justify-center gap-2 mt-8">
-            <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Previous
-            </button>
-            <span className="px-4 py-2 text-gray-700">Page {currentPage} of {Math.max(1, Math.ceil(totalItems / imagesPerPage))}</span>
-            <button
-              onClick={() => setCurrentPage(p => p + 1)}
-              disabled={(currentPage * imagesPerPage) >= totalItems}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Next
-            </button>
-          </div>
         </div>
       )}
+
+      {/* Pagination Controls (below the media grid) */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 text-gray-700">Page {currentPage} of {Math.max(1, Math.ceil(totalItems / imagesPerPage))}</span>
+          <button
+            onClick={() => setCurrentPage(p => p + 1)}
+            disabled={(currentPage * imagesPerPage) >= totalItems}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
