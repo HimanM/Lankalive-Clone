@@ -12,6 +12,7 @@ def list_articles():
     limit = int(request.args.get('limit', 20))
     offset = int(request.args.get('offset', 0))
     category = request.args.get('category')  # category slug
+    tag = request.args.get('tag')  # tag slug
     is_highlight = request.args.get('is_highlight')  # '1' or 'true'
     status = request.args.get('status', 'published')  # default to published for public
     date_from = request.args.get('dateFrom')  # YYYY-MM-DD format
@@ -30,6 +31,7 @@ def list_articles():
             limit=limit, 
             offset=offset, 
             category_slug=category,
+            tag_slug=tag,
             is_highlight=is_highlight in ['1', 'true'] if is_highlight else None,
             status=status,
             date_from=date_from,

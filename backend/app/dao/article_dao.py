@@ -20,7 +20,7 @@ class ArticleDAO:
         return self.session.query(Article).filter(Article.slug == slug).first()
 
     def list(self, limit: int = 20, offset: int = 0, category_slug: str = None,
-             is_highlight: bool = None, status: Optional[str] = 'published',
+             tag_slug: str = None, is_highlight: bool = None, status: Optional[str] = 'published',
              date_from: str = None, date_to: str = None) -> List[Article]:
         
         
@@ -44,6 +44,14 @@ class ArticleDAO:
                 )
             else:
                 # Category doesn't exist, return empty
+                return []
+        # Filter by tag - check many-to-many relationship
+        if tag_slug:
+            from app.models.tag import Tag
+            tag = self.session.query(Tag).filter(Tag.slug == tag_slug).first()
+            if tag:
+                query = query.outerjoin(Article.tags).filter(Tag.id == tag.id)
+            else:
                 return []
         
         # Filter by highlight

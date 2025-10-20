@@ -62,9 +62,10 @@ export function login(email, password) {
 
 // Articles
 export function listArticles(params = {}) {
-  const { limit = 20, offset = 0, category, is_highlight, status, dateFrom, dateTo } = params
+  const { limit = 20, offset = 0, category, tag, is_highlight, status, dateFrom, dateTo } = params
   let url = `/api/articles/?limit=${limit}&offset=${offset}`
   if (category) url += `&category=${encodeURIComponent(category)}`
+  if (tag) url += `&tag=${encodeURIComponent(tag)}`
   if (is_highlight !== undefined) url += `&is_highlight=${is_highlight ? '1' : '0'}`
   if (status) url += `&status=${encodeURIComponent(status)}`
   if (dateFrom) url += `&dateFrom=${encodeURIComponent(dateFrom)}`
