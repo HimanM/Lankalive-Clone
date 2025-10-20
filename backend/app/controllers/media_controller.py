@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, current_app
 from app.config.session import SessionLocal
 from app.services.media_service import MediaService
 from app.models.media import MediaAsset
+from app.controllers.decorators import requires_role
 import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -20,6 +21,7 @@ def list_media():
 
 
 @bp.route('/upload', methods=['POST'])
+@requires_role('admin')
 def upload_media():
     if 'file' not in request.files:
         return jsonify({'error': 'no file'}), 400

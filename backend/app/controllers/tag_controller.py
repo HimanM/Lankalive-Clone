@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.config.session import SessionLocal
 from app.services.tag_service import TagService
 from app.models.tag import Tag
+from app.controllers.decorators import requires_role
 
 bp = Blueprint('tags', __name__, url_prefix='/api/tags')
 
@@ -15,6 +16,7 @@ def list_tags():
 
 
 @bp.route('/', methods=['POST'])
+@requires_role('admin')
 def create_tag():
     data = request.json or {}
     t = Tag(name=data.get('name'), slug=data.get('slug'))

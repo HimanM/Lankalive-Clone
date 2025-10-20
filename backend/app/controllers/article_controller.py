@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.config.session import SessionLocal
 from app.services.article_service import ArticleService
 from app.models.article import Article
+from app.controllers.decorators import requires_role
 
 bp = Blueprint('articles', __name__, url_prefix='/api/articles')
 
@@ -38,6 +39,7 @@ def get_article(slug):
 
 
 @bp.route('/', methods=['POST'])
+@requires_role('admin')
 def create_article():
     data = request.json or {}
     a = Article(

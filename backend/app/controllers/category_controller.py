@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.config.session import SessionLocal
 from app.services.category_service import CategoryService
 from app.models.category import Category
+from app.controllers.decorators import requires_role
 
 bp = Blueprint('categories', __name__, url_prefix='/api/categories')
 
@@ -15,6 +16,7 @@ def list_categories():
 
 
 @bp.route('/', methods=['POST'])
+@requires_role('admin')
 def create_category():
     data = request.json or {}
     c = Category(name=data.get('name'), slug=data.get('slug'))

@@ -16,6 +16,7 @@ from app.controllers.media_controller import bp as media_bp
 from app.controllers.user_controller import bp as users_bp
 from app.controllers.homepage_section_controller import bp as sections_bp
 from app.controllers.homepage_section_item_controller import bp as items_bp
+from app.controllers.auth_controller import bp as auth_bp
 
 
 def create_app():
@@ -23,6 +24,7 @@ def create_app():
 
     # register blueprints
     app.register_blueprint(articles_bp)
+    app.register_blueprint(auth_bp)
     app.register_blueprint(categories_bp)
     app.register_blueprint(tags_bp)
     app.register_blueprint(media_bp)
