@@ -8,7 +8,7 @@ export default function Home() {
   useEffect(() => {
     async function load() {
       try {
-        const data = await api.listArticles()
+        const data = await api.listArticles({ limit: 50, status: 'published' })
         setArticles(data || [])
       } catch (e) {
         console.error(e)

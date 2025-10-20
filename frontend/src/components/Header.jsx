@@ -1,10 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getToken } from '../utils/auth'
+import * as api from '../api'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [categories, setCategories] = useState([])
   const logged = !!getToken()
+
+  useEffect(() => {
+    api.listCategories().then(setCategories).catch(console.error)
+  }, [])
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -39,15 +45,15 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Home</Link>
-            <Link to="/categories" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Categories</Link>
-            <Link to="/tags" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Tags</Link>
-            {logged && (
-              <>
-                <Link to="/media" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Media</Link>
-                <Link to="/users" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Users</Link>
-                <Link to="/sections" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Sections</Link>
-              </>
-            )}
+            {categories.slice(0, 6).map(cat => (
+              <Link 
+                key={cat.id} 
+                to={`/category/${cat.slug}`} 
+                className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap text-sm"
+              >
+                {cat.name}
+              </Link>
+            ))}
             <Link to="/admin" className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium">
               {logged ? 'Dashboard' : 'Login'}
             </Link>
@@ -73,15 +79,15 @@ export default function Header() {
         {mobileMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t pt-4">
             <Link to="/" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Home</Link>
-            <Link to="/categories" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Categories</Link>
-            <Link to="/tags" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Tags</Link>
-            {logged && (
-              <>
-                <Link to="/media" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Media</Link>
-                <Link to="/users" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Users</Link>
-                <Link to="/sections" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Sections</Link>
-              </>
-            )}
+            {categories.map(cat => (
+              <Link 
+                key={cat.id} 
+                to={`/category/${cat.slug}`} 
+                className="text-gray-700 hover:text-red-600 font-medium transition-colors"
+              >
+                {cat.name}
+              </Link>
+            ))}
             <Link to="/admin" className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-center">
               {logged ? 'Dashboard' : 'Login'}
             </Link>
