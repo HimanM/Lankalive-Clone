@@ -7,7 +7,7 @@ import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
 
 export default function CategoryPage() {
-  useScrollToTop()
+  useScrollToTop([currentPage])
   const { slug } = useParams()
   const [category, setCategory] = useState(null)
   const [articles, setArticles] = useState([])
