@@ -1,7 +1,7 @@
-# Lanka Live Clone - Full-Stack News CMS
+# Lanka Live Clone - Full-Stack News CMS 
+[![Deploy Lanka Live Clone to VPS](https://github.com/HimanM/Lankalive-Clone/actions/workflows/deploy.yml/badge.svg)](https://github.com/HimanM/Lankalive-Clone/actions/workflows/deploy.yml)
 
 [![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge&logo=vercel)](https://lankalive.himanmanduja.fun/)
-[![Deploy Lanka Live Clone to VPS](https://github.com/HimanM/Lankalive-Clone/actions/workflows/deploy.yml/badge.svg)](https://github.com/HimanM/Lankalive-Clone/actions/workflows/deploy.yml)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Flask](https://img.shields.io/badge/Flask-3.0-000000?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
