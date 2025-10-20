@@ -8,7 +8,7 @@ export default function LatestNews() {
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
-  const articlesPerPage = 12
+  const articlesPerPage = 8
   
   // Filter states
   const [searchInput, setSearchInput] = useState('')
@@ -33,7 +33,7 @@ export default function LatestNews() {
       const offset = (currentPage - 1) * articlesPerPage
       
       const params = { 
-        limit: articlesPerPage, 
+        limit: articlesPerPage,
         offset,
         status: 'published'
       }
@@ -166,8 +166,8 @@ export default function LatestNews() {
                   ))}
                 </div>
 
-                {/* Pagination */}
-                {articles.length === articlesPerPage && (
+                {/* Pagination: show controls when we have a full page or are on a later page */}
+                {(articles.length === articlesPerPage || currentPage > 1) && (
                   <div className="flex items-center justify-center gap-2 mt-8">
                     <button
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
