@@ -7,11 +7,12 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 # Copy application code
 COPY . .
@@ -22,5 +23,9 @@ RUN mkdir -p /app/static/uploads
 # Expose port
 EXPOSE 8000
 
-# Run the application
-CMD ["python", "run.py"]
+# Use Gunicorn for production, fallback to Flask dev server if DEV=true
+CMD if [ "$DEV" = "true" ]; then \
+        python run.py; \
+    else \
+        gunicorn -w 4 -b 0.0.0.0:8000 --timeout 120 --access-logfile - --error-logfile - "run:app"; \
+    fi

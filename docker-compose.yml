@@ -61,11 +61,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        # Pass API URL at build time - use DOMAIN if set, otherwise use internal Docker network
-        VITE_API_BASE: ${VITE_API_BASE:-http://backend:8000}
+        # Use empty string - API calls go through Nginx proxy at same origin
+        VITE_API_BASE: ""
     container_name: lankalive_frontend
     ports:
-      - "49155:80"  # Uncommon port as requested
+      - "49155:80"  # Expose frontend to host
     depends_on:
       - backend
     networks:

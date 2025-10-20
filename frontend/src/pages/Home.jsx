@@ -11,9 +11,16 @@ export default function Home() {
     async function load() {
       try {
         const data = await api.listArticles({ limit: 50, status: 'published' })
-        setArticles(data || [])
+        // Ensure we always have an array
+        if (Array.isArray(data)) {
+          setArticles(data)
+        } else {
+          console.error('API returned non-array:', data)
+          setArticles([])
+        }
       } catch (e) {
-        console.error(e)
+        console.error('Failed to load articles:', e)
+        setArticles([]) // Set empty array on error to prevent crashes
       }
     }
     load()

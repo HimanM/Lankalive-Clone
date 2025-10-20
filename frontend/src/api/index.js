@@ -1,33 +1,48 @@
 import { getToken, authHeaders, clearToken } from '../utils/auth'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'
+// In production (Docker), API calls go through Nginx proxy at same origin
+// In development, use explicit backend URL
+const API_BASE = import.meta.env.VITE_API_BASE || ''
 
 async function request(path, opts = {}) {
   const url = API_BASE + path
-  const resp = await fetch(url, opts)
-  const text = await resp.text()
   
-  // Handle 401 Unauthorized - token expired or invalid
-  if (resp.status === 401) {
-    clearToken()
-    // Redirect to login page if not already there
-    if (!window.location.pathname.includes('/admin')) {
-      window.location.href = '/admin'
-    }
-    throw new Error('Session expired. Please login again.')
-  }
-  
-  // Handle 403 Forbidden - insufficient permissions
-  if (resp.status === 403) {
-    window.location.href = '/unauthorized'
-    throw new Error('Access denied. You do not have permission to access this resource.')
-  }
-  
-  if (!resp.ok) throw new Error(text || resp.statusText)
   try {
-    return JSON.parse(text || '{}')
-  } catch (e) {
-    return text
+    const resp = await fetch(url, opts)
+    const text = await resp.text()
+    
+    // Handle 401 Unauthorized - token expired or invalid
+    if (resp.status === 401) {
+      clearToken()
+      // Redirect to login page if not already there
+      if (!window.location.pathname.includes('/admin')) {
+        window.location.href = '/admin'
+      }
+      throw new Error('Session expired. Please login again.')
+    }
+    
+    // Handle 403 Forbidden - insufficient permissions
+    if (resp.status === 403) {
+      window.location.href = '/unauthorized'
+      throw new Error('Access denied. You do not have permission to access this resource.')
+    }
+    
+    if (!resp.ok) {
+      console.error(`API Error: ${resp.status} ${resp.statusText}`, text)
+      throw new Error(text || resp.statusText)
+    }
+    
+    try {
+      return JSON.parse(text || '{}')
+    } catch (e) {
+      return text
+    }
+  } catch (error) {
+    // Log the full error for debugging
+    console.error(`API Request Failed: ${url}`, error)
+    console.error('API_BASE:', API_BASE)
+    console.error('Full URL:', url)
+    throw error
   }
 }
 
