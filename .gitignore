@@ -4,3 +4,7 @@ __pycache__
 *.pyc
 /backend/.pytest_cache
 /backend/static/uploads
+/frontend/.vite/deps
+/SECRETS.md
+/DEPLOYMENT_CHECKLIST.md
+/DOCKER_TROUBLESHOOTING.md

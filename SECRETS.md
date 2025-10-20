@@ -47,11 +47,13 @@ Example: /root/Lankalive-Clone
 ---
 
 ### 6. DOMAIN
-**Value:** `Your domain name (optional)`
+**Value:** `Your domain name WITHOUT http:// or port`
 ```
-Example: news.yourdomain.com
-OR leave empty to use IP address
+Example: lankalive.himanmanduja.fun
+OR use IP: 123.45.67.89
 ```
+
+**Important:** Don't include `http://` or port numbers, just the domain/IP.
 
 ---
 

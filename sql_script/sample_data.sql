@@ -33,7 +33,7 @@ VALUES
 
 -- Admin user (password hash placeholder — replace with actual bcrypt hash before use)
 INSERT INTO users (id, name, email, password_hash, role)
-VALUES (uuid_generate_v4(), 'Admin', 'admin@example.com', 'REPLACE_WITH_BCRYPT_HASH', 'admin');
+VALUES (uuid_generate_v4(), 'Admin', 'admin@example.com', '$2b$12$il.A183CqkjY4643FjrUH.0PsHILj98rVhDmy2eEsl9DbO2S84A1.', 'admin');
 
 -- Example articles
 INSERT INTO articles (id, status, title, summary, body_richtext, slug, primary_category_id, hero_image_url, is_breaking, is_highlight, is_featured, published_at)

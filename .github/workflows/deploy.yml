@@ -63,8 +63,9 @@ jobs:
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             POSTGRES_DB=lankalive
             
-            # API Configuration
-            VITE_API_URL=http://backend:8000
+            # Frontend API Configuration
+            # Use domain if provided, otherwise use internal Docker network
+            VITE_API_BASE=http://${{ secrets.DOMAIN }}:49155
             EOF
             
             echo "✅ .env file created successfully"

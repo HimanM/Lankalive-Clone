@@ -58,10 +58,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        # Pass API URL at build time - use DOMAIN if set, otherwise use internal Docker network
+        VITE_API_BASE: ${VITE_API_BASE:-http://backend:8000}
     container_name: lankalive_frontend
-    environment:
-      # Backend API URL - internal Docker network
-      VITE_API_URL: http://backend:8000
     ports:
       - "49155:80"  # Uncommon port as requested
     depends_on:
