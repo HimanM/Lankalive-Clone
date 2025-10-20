@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'
+const API_BASE = import.meta.env.VITE_API_BASE
 
 /**
  * Convert a relative image URL to an absolute URL
@@ -13,6 +13,12 @@ export function getImageUrl(url) {
     return url
   }
   
-  // If relative URL, prepend API base
+  // In production (when VITE_API_BASE is empty or not set), 
+  // return relative URL so it uses the current domain via Nginx proxy
+  if (!API_BASE || API_BASE === '') {
+    return url
+  }
+  
+  // In development, prepend API base (e.g., http://localhost:8000)
   return API_BASE + url
 }
