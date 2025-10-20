@@ -38,8 +38,12 @@ export default function Home() {
   // Use the latest highlighted article as featured, or fallback to first article
   const featuredArticle = highlightedArticles.length > 0 ? highlightedArticles[0] : filteredArticles[0]
   
-  const latestArticles = filteredArticles.slice(1, 7)
-  const moreArticles = filteredArticles.slice(7)
+  // Get 12 latest articles sorted by published_at (most recent first)
+  const latestArticles = [...filteredArticles]
+    .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+    .slice(0, 12)
+  
+  const moreArticles = filteredArticles.slice(12)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,7 +51,7 @@ export default function Home() {
       {hotNews.length > 0 && (
         <div className="bg-red-600 text-white py-2 px-4">
           <div className="container mx-auto flex items-center gap-4">
-            <span className="font-bold text-sm uppercase flex-shrink-0">🔥 Hot News</span>
+            <span className="font-bold text-sm uppercase flex-shrink-0">Hot News</span>
             <div className="overflow-hidden flex-1">
               <div className="animate-marquee whitespace-nowrap">
                 {hotNews.map((article, idx) => (
@@ -129,7 +133,7 @@ export default function Home() {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-4">Latest News</h2>
-            <a href="#" className="text-red-600 hover:text-red-700 text-sm font-semibold uppercase">View All →</a>
+            <a href="/latest-news" className="text-red-600 hover:text-red-700 text-sm font-semibold uppercase">View All →</a>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestArticles.map(article => (

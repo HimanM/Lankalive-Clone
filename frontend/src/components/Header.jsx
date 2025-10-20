@@ -51,13 +51,16 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Home</Link>
+            {!logged && (
+              <Link to="/latest-news" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Latest News</Link>
+            )}
             {logged ? (
               <>
-                <Link to="/admin/articles/new" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap text-sm">Create Article</Link>
-                <Link to="/admin/articles" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap text-sm">All Articles</Link>
-                <Link to="/admin/categories" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap text-sm">Categories</Link>
-                <Link to="/admin/media" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap text-sm">Media</Link>
-                <Link to="/admin/tags" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap text-sm">Tags</Link>
+                <Link to="/admin/articles/new" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap">Create Article</Link>
+                <Link to="/admin/articles" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap">All Articles</Link>
+                <Link to="/admin/categories" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap">Categories</Link>
+                <Link to="/admin/media" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap">Media</Link>
+                <Link to="/admin/tags" className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap">Tags</Link>
                 <Link to="/admin/dashboard" className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium">
                   Dashboard
                 </Link>
@@ -74,7 +77,7 @@ export default function Header() {
                   <Link 
                     key={cat.id} 
                     to={`/category/${cat.slug}`} 
-                    className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap text-sm"
+                    className="text-gray-700 hover:text-red-600 font-medium transition-colors whitespace-nowrap"
                   >
                     {cat.name}
                   </Link>
@@ -106,6 +109,9 @@ export default function Header() {
         {mobileMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t pt-4">
             <Link to="/" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Home</Link>
+            {!logged && (
+              <Link to="/latest-news" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Latest News</Link>
+            )}
             {logged ? (
               <>
                 <Link to="/admin/articles/new" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Create Article</Link>

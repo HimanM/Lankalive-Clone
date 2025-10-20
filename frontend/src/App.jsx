@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Article from './pages/Article'
 import Admin from './pages/Admin'
 import CategoryPage from './pages/CategoryPage'
+import LatestNews from './pages/LatestNews'
 import AdminDashboard from './pages/AdminDashboard'
 import ArticleEditor from './pages/ArticleEditor'
 import ArticlesList from './pages/ArticlesList'
@@ -21,6 +22,7 @@ export default function App() {
         <Route path='/' element={<Home />} />
         <Route path='/article/:slug' element={<Article />} />
         <Route path='/category/:slug' element={<CategoryPage />} />
+        <Route path='/latest-news' element={<LatestNews />} />
         <Route path='/admin' element={<Admin />} />
         <Route path='/admin/dashboard' element={<AdminDashboard />} />
         <Route path='/admin/articles' element={<ArticlesList />} />

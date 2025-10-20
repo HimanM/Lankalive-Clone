@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import * as api from '../api'
 import ArticleCard from '../components/ArticleCard'
 import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
 
-export default function CategoryPage() {
-  const { slug } = useParams()
-  const [category, setCategory] = useState(null)
+export default function LatestNews() {
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
@@ -36,7 +33,6 @@ export default function CategoryPage() {
       const offset = (currentPage - 1) * articlesPerPage
       
       const params = { 
-        category: slug, 
         limit: articlesPerPage, 
         offset,
         status: 'published'
@@ -46,17 +42,14 @@ export default function CategoryPage() {
       if (dateFrom) params.dateFrom = dateFrom
       if (dateTo) params.dateTo = dateTo
       
-      Promise.all([
-        api.getCategory(slug),
-        api.listArticles(params)
-      ])
-        .then(([cat, arts]) => {
-          setCategory(cat)
-          // Filter by search query on frontend
-          let filtered = arts
+      api.listArticles(params)
+        .then((arts) => {
+          // Filter by search query on frontend and sort by latest (published_at desc)
+          let filtered = arts.sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+          
           if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase()
-            filtered = arts.filter(article => 
+            filtered = filtered.filter(article => 
               article.title.toLowerCase().includes(query) ||
               article.summary?.toLowerCase().includes(query)
             )
@@ -67,7 +60,7 @@ export default function CategoryPage() {
         .finally(() => setLoading(false))
     }
     loadData()
-  }, [slug, currentPage, dateFrom, dateTo, searchQuery])
+  }, [currentPage, dateFrom, dateTo, searchQuery])
 
   if (loading) {
     return (
@@ -77,20 +70,12 @@ export default function CategoryPage() {
     )
   }
 
-  if (!category) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Category not found</div>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-red-600 text-white py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold">{category.name}</h1>
-          <p className="text-red-100 mt-2">Latest news and updates</p>
+          <h1 className="text-4xl font-bold">Latest News</h1>
+          <p className="text-red-100 mt-2">Most recent news and updates</p>
         </div>
       </div>
 
@@ -171,7 +156,7 @@ export default function CategoryPage() {
             {/* Articles Grid */}
             {articles.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-lg shadow">
-                <p className="text-gray-500 text-lg">No articles in this category yet</p>
+                <p className="text-gray-500 text-lg">No articles found</p>
               </div>
             ) : (
               <>
