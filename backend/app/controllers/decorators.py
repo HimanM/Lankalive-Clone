@@ -42,6 +42,22 @@ def decode_access_token(token: str):
         return None
 
 
+def get_current_user():
+    """Get current authenticated user from request header, or None if not authenticated."""
+    auth = request.headers.get('Authorization', '')
+    if not auth.startswith('Bearer '):
+        return None
+    token = auth.split(' ', 1)[1].strip()
+    payload = decode_access_token(token)
+    return payload
+
+
+def is_admin():
+    """Check if current user is an admin."""
+    user = get_current_user()
+    return user and user.get('role') == 'admin'
+
+
 def requires_role(*roles):
     """Decorator factory to require a role (e.g., 'admin')."""
 

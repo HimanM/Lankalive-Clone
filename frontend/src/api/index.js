@@ -35,16 +35,20 @@ export function login(email, password) {
 
 // Articles
 export function listArticles(params = {}) {
-  const { limit = 20, offset = 0, category, is_highlight, status } = params
+  const { limit = 20, offset = 0, category, is_highlight, status, dateFrom, dateTo } = params
   let url = `/api/articles/?limit=${limit}&offset=${offset}`
   if (category) url += `&category=${encodeURIComponent(category)}`
   if (is_highlight !== undefined) url += `&is_highlight=${is_highlight ? '1' : '0'}`
   if (status) url += `&status=${encodeURIComponent(status)}`
-  return request(url)
+  if (dateFrom) url += `&dateFrom=${encodeURIComponent(dateFrom)}`
+  if (dateTo) url += `&dateTo=${encodeURIComponent(dateTo)}`
+  // Include auth headers so backend knows if user is admin
+  return request(url, { headers: authHeaders() })
 }
 
 export function getArticle(slug) {
-  return request(`/api/articles/${encodeURIComponent(slug)}`)
+  // Include auth headers so backend knows if user is admin
+  return request(`/api/articles/${encodeURIComponent(slug)}`, { headers: authHeaders() })
 }
 
 export function getArticleById(id) {

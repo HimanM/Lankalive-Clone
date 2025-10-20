@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../api'
 import { getImageUrl } from '../utils/image'
+import Sidebar from '../components/Sidebar'
 
 export default function Article() {
   const { slug } = useParams()
@@ -19,11 +20,14 @@ export default function Article() {
     load()
   }, [slug])
 
-  if (!article) return <div className="max-w-4xl mx-auto px-4 py-8">Loading...</div>
+  if (!article) return <div className="max-w-7xl mx-auto px-4 py-8">Loading...</div>
 
   return (
-    <div className="max-w-8xl mx-auto px-4 py-8">
-      <article className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content - 2/3 width */}
+        <div className="lg:col-span-2">
+          <article className="bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Hero Image Container - Fixed aspect ratio */}
         {article.hero_image_url && (
           <div className="w-full aspect-video bg-gray-100 overflow-hidden">
@@ -95,6 +99,13 @@ export default function Article() {
           )}
         </div>
       </article>
+        </div>
+
+        {/* Sidebar - 1/3 width */}
+        <div className="lg:col-span-1">
+          <Sidebar />
+        </div>
+      </div>
     </div>
   )
 }

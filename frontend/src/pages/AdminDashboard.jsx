@@ -48,45 +48,6 @@ export default function AdminDashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <Link
-            to="/admin/article/new"
-            className="bg-red-600 text-white p-6 rounded-lg hover:bg-red-700 transition-colors text-center"
-          >
-            <div className="text-2xl mb-2">📝</div>
-            <div className="font-semibold">Create Article</div>
-          </Link>
-          <Link
-            to="/admin/articles"
-            className="bg-orange-600 text-white p-6 rounded-lg hover:bg-orange-700 transition-colors text-center"
-          >
-            <div className="text-2xl mb-2">📰</div>
-            <div className="font-semibold">All Articles</div>
-          </Link>
-          <Link
-            to="/admin/categories"
-            className="bg-blue-600 text-white p-6 rounded-lg hover:bg-blue-700 transition-colors text-center"
-          >
-            <div className="text-2xl mb-2">📁</div>
-            <div className="font-semibold">Categories</div>
-          </Link>
-          <Link
-            to="/admin/media"
-            className="bg-green-600 text-white p-6 rounded-lg hover:bg-green-700 transition-colors text-center"
-          >
-            <div className="text-2xl mb-2">🖼️</div>
-            <div className="font-semibold">Media</div>
-          </Link>
-          <Link
-            to="/admin/tags"
-            className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors text-center"
-          >
-            <div className="text-2xl mb-2">🏷️</div>
-            <div className="font-semibold">Tags</div>
-          </Link>
-        </div>
-
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
@@ -117,7 +78,7 @@ export default function AdminDashboard() {
             {articles.length === 0 ? (
               <div className="p-6 text-center text-gray-500">
                 <p className="mb-4">No articles yet</p>
-                <Link to="/admin/article/new" className="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                <Link to="/admin/articles/new" className="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors">
                   Create Your First Article
                 </Link>
               </div>
@@ -127,7 +88,7 @@ export default function AdminDashboard() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900 mb-1">
-                        <Link to={`/admin/article/${article.id}`} className="hover:text-red-600">
+                        <Link to={`/admin/articles/${article.id}`} className="hover:text-red-600">
                           {article.title}
                         </Link>
                       </h3>

@@ -8,7 +8,12 @@ export default function ArticlesList() {
   const [articles, setArticles] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState({ status: 'all', category: '' })
+  const [filter, setFilter] = useState({ 
+    status: 'all', 
+    category: '',
+    dateFrom: '',
+    dateTo: ''
+  })
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -29,8 +34,11 @@ export default function ArticlesList() {
 
       // Load articles with filters
       const params = { limit: 100 }
-      if (filter.status !== 'all') params.status = filter.status
+      // Always include status, even if 'all' - backend will handle it
+      params.status = filter.status
       if (filter.category) params.category = filter.category
+      if (filter.dateFrom) params.dateFrom = filter.dateFrom
+      if (filter.dateTo) params.dateTo = filter.dateTo
 
       const arts = await api.listArticles(params)
       setArticles(arts)
@@ -61,6 +69,20 @@ export default function ArticlesList() {
     setFilter(prev => ({ ...prev, category: e.target.value }))
   }
 
+  const handleDateChange = (field, value) => {
+    setFilter(prev => ({ ...prev, [field]: value }))
+  }
+
+  const setQuickDateFilter = (days) => {
+    const dateTo = new Date().toISOString().split('T')[0]
+    const dateFrom = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    setFilter(prev => ({ ...prev, dateFrom, dateTo }))
+  }
+
+  const clearDateFilter = () => {
+    setFilter(prev => ({ ...prev, dateFrom: '', dateTo: '' }))
+  }
+
   if (loading) {
     return <div className="p-8">Loading...</div>
   }
@@ -75,7 +97,7 @@ export default function ArticlesList() {
               <p className="text-gray-600 mt-1">Manage your content</p>
             </div>
             <Link
-              to="/admin/article/new"
+              to="/admin/articles/new"
               className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold"
             >
               + Create Article
@@ -87,9 +109,10 @@ export default function ArticlesList() {
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}
         <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex flex-wrap gap-4 items-end">
+            {/* Status Filter */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mr-2">Status:</label>
+              <label className="text-sm font-medium text-gray-700 block mb-2">Status:</label>
               <div className="inline-flex gap-2">
                 <button
                   onClick={() => handleStatusChange('all')}
@@ -134,8 +157,9 @@ export default function ArticlesList() {
               </div>
             </div>
 
-            <div className="flex-1">
-              <label className="text-sm font-medium text-gray-700 mr-2">Category:</label>
+            {/* Category Filter */}
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-2">Category:</label>
               <select
                 value={filter.category}
                 onChange={handleCategoryChange}
@@ -147,6 +171,61 @@ export default function ArticlesList() {
                 ))}
               </select>
             </div>
+
+            {/* Date Range Filter */}
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-2">Date Range:</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="date"
+                  value={filter.dateFrom}
+                  onChange={(e) => handleDateChange('dateFrom', e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  placeholder="From"
+                />
+                <span className="text-gray-500">to</span>
+                <input
+                  type="date"
+                  value={filter.dateTo}
+                  onChange={(e) => handleDateChange('dateTo', e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  placeholder="To"
+                />
+              </div>
+            </div>
+
+            {/* Quick Date Filters */}
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-2">Quick Filter:</label>
+              <div className="inline-flex gap-2">
+                <button
+                  onClick={() => setQuickDateFilter(7)}
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                >
+                  Last 7 days
+                </button>
+                <button
+                  onClick={() => setQuickDateFilter(30)}
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                >
+                  Last 30 days
+                </button>
+                <button
+                  onClick={() => setQuickDateFilter(90)}
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                >
+                  Last 90 days
+                </button>
+                {(filter.dateFrom || filter.dateTo) && (
+                  <button
+                    onClick={clearDateFilter}
+                    className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm"
+                  >
+                    Clear Dates
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -155,7 +234,7 @@ export default function ArticlesList() {
           {articles.length === 0 ? (
             <div className="p-12 text-center text-gray-500">
               <p className="text-lg">No articles found</p>
-              <Link to="/admin/article/new" className="text-red-600 hover:text-red-700 font-medium mt-2 inline-block">
+              <Link to="/admin/articles/new" className="text-red-600 hover:text-red-700 font-medium mt-2 inline-block">
                 Create your first article →
               </Link>
             </div>
@@ -260,7 +339,7 @@ export default function ArticlesList() {
                             </svg>
                           </Link>
                           <Link
-                            to={`/admin/article/${article.id}`}
+                            to={`/admin/articles/${article.id}`}
                             className="text-blue-600 hover:text-blue-900"
                             title="Edit"
                           >

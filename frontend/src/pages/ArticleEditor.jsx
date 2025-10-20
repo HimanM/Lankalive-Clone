@@ -132,7 +132,10 @@ export default function ArticleEditor() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 max-w-4xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left: Form - 2/3 width */}
+          <div className="lg:col-span-2">
+            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
           {/* Title */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -395,6 +398,110 @@ export default function ArticleEditor() {
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Right: Preview - 1/3 width */}
+      <div className="lg:col-span-1">
+        <div className="bg-white rounded-lg shadow p-6 sticky top-30 max-h-[calc(100vh-7rem)] overflow-y-auto">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Article Preview</h3>
+          
+          {/* URL Preview */}
+          {formData.slug && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-xs font-medium text-blue-900 mb-1">Article URL:</p>
+              <code className="text-xs text-blue-700 break-all">
+                {window.location.origin}/article/{formData.slug}
+              </code>
+            </div>
+          )}
+
+          {/* Hero Image Preview */}
+          {formData.hero_image_url && (
+            <div className="mb-4">
+              <p className="text-xs font-medium text-gray-700 mb-2">Hero Image:</p>
+              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                <img 
+                  src={getImageUrl(formData.hero_image_url)} 
+                  alt="Hero preview" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Title Preview */}
+          {formData.title && (
+            <div className="mb-4">
+              <p className="text-xs font-medium text-gray-700 mb-2">Title:</p>
+              <h2 className="text-xl font-bold text-gray-900 line-clamp-3">{formData.title}</h2>
+            </div>
+          )}
+
+          {/* Summary Preview */}
+          {formData.summary && (
+            <div className="mb-4">
+              <p className="text-xs font-medium text-gray-700 mb-2">Summary:</p>
+              <p className="text-sm text-gray-600 line-clamp-4">{formData.summary}</p>
+            </div>
+          )}
+
+          {/* Status Badge */}
+          <div className="mb-4">
+            <p className="text-xs font-medium text-gray-700 mb-2">Status:</p>
+            <span className={`inline-block px-3 py-1 text-xs font-medium rounded ${
+              formData.status === 'published'
+                ? 'bg-green-100 text-green-800'
+                : formData.status === 'draft'
+                ? 'bg-yellow-100 text-yellow-800'
+                : 'bg-gray-100 text-gray-800'
+            }`}>
+              {formData.status}
+            </span>
+          </div>
+
+          {/* Category Preview */}
+          {formData.primary_category_id && (
+            <div className="mb-4">
+              <p className="text-xs font-medium text-gray-700 mb-2">Primary Category:</p>
+              <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+                {categories.find(c => c.id === formData.primary_category_id)?.name || 'Unknown'}
+              </span>
+            </div>
+          )}
+
+          {/* Flags Preview */}
+          {(formData.is_highlight || formData.is_breaking || formData.is_featured) && (
+            <div className="mb-4">
+              <p className="text-xs font-medium text-gray-700 mb-2">Flags:</p>
+              <div className="flex flex-wrap gap-1">
+                {formData.is_highlight && (
+                  <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">
+                    Highlight
+                  </span>
+                )}
+                {formData.is_breaking && (
+                  <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded">
+                    Breaking
+                  </span>
+                )}
+                {formData.is_featured && (
+                  <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded">
+                    Featured
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Content Length */}
+          {formData.body && (
+            <div className="mb-4 text-xs text-gray-500">
+              Content: ~{formData.body.length} characters
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
       </div>
     </div>
   )

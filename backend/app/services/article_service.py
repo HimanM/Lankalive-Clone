@@ -14,13 +14,16 @@ class ArticleService:
         return self.dao.get(article_id)
 
     def list(self, limit: int = 20, offset: int = 0, category_slug: str = None, 
-             is_highlight: bool = None, status: str = 'published') -> List[Article]:
+             is_highlight: bool = None, status: Optional[str] = 'published',
+             date_from: str = None, date_to: str = None) -> List[Article]:
         return self.dao.list(
             limit=limit, 
             offset=offset, 
             category_slug=category_slug,
             is_highlight=is_highlight,
-            status=status
+            status=status,
+            date_from=date_from,
+            date_to=date_to
         )
 
     def create(self, article: Article) -> Article:

@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.config.session import SessionLocal
 from app.services.article_service import ArticleService
 from app.models.article import Article
-from app.controllers.decorators import requires_role
+from app.controllers.decorators import requires_role, is_admin
 
 bp = Blueprint('articles', __name__, url_prefix='/api/articles')
 
@@ -14,6 +14,15 @@ def list_articles():
     category = request.args.get('category')  # category slug
     is_highlight = request.args.get('is_highlight')  # '1' or 'true'
     status = request.args.get('status', 'published')  # default to published for public
+    date_from = request.args.get('dateFrom')  # YYYY-MM-DD format
+    date_to = request.args.get('dateTo')  # YYYY-MM-DD format
+    
+    # For non-admin users, force status to 'published' regardless of query param
+    if not is_admin():
+        status = 'published'
+    # For admin users, if status is 'all', set to None to skip filtering
+    elif status == 'all':
+        status = None
     
     with SessionLocal() as session:
         svc = ArticleService(session)
@@ -22,7 +31,9 @@ def list_articles():
             offset=offset, 
             category_slug=category,
             is_highlight=is_highlight in ['1', 'true'] if is_highlight else None,
-            status=status
+            status=status,
+            date_from=date_from,
+            date_to=date_to
         )
         # basic serialization
         result = []
@@ -45,6 +56,7 @@ def list_articles():
                 'summary': a.summary,
                 'hero_image_url': a.hero_image_url,
                 'published_at': a.published_at.isoformat() if a.published_at else None,
+                'status': a.status,
                 'categories': categories,
                 'is_highlight': a.is_highlight,
                 'is_breaking': a.is_breaking,
@@ -91,6 +103,11 @@ def get_article(slug):
         a = svc.dao.get_by_slug(slug)
         if not a:
             return jsonify({'error': 'not found'}), 404
+        
+        # Non-admin users can only view published articles
+        if not is_admin() and a.status != 'published':
+            return jsonify({'error': 'not found'}), 404
+        
         # serialize related fields
         categories = [{'id': str(c.id), 'name': c.name, 'slug': c.slug} for c in (a.categories or [])]
         
@@ -111,6 +128,7 @@ def get_article(slug):
             'body': a.body_richtext,
             'hero_image_url': a.hero_image_url,
             'published_at': a.published_at.isoformat() if a.published_at else None,
+            'status': a.status,
             'categories': categories,
             'tags': tags,
         })

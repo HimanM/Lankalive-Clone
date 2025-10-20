@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from app.models.article import Article
 from uuid import UUID
 from app.models.category import Category
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
+from datetime import datetime
 
 
 class ArticleDAO:
@@ -19,13 +20,14 @@ class ArticleDAO:
         return self.session.query(Article).filter(Article.slug == slug).first()
 
     def list(self, limit: int = 20, offset: int = 0, category_slug: str = None,
-             is_highlight: bool = None, status: str = 'published') -> List[Article]:
+             is_highlight: bool = None, status: Optional[str] = 'published',
+             date_from: str = None, date_to: str = None) -> List[Article]:
         
         
         query = self.session.query(Article).distinct()
         
-        # Filter by status
-        if status:
+        # Filter by status (None means no filter - show all statuses)
+        if status is not None:
             query = query.filter(Article.status == status)
         
         # Filter by category - check both junction table AND primary_category
@@ -47,6 +49,24 @@ class ArticleDAO:
         # Filter by highlight
         if is_highlight is not None:
             query = query.filter(Article.is_highlight == is_highlight)
+        
+        # Filter by date range on published_at
+        if date_from:
+            try:
+                date_from_obj = datetime.fromisoformat(date_from)
+                query = query.filter(Article.published_at >= date_from_obj)
+            except ValueError:
+                pass  # Invalid date format, skip filter
+        
+        if date_to:
+            try:
+                # Add one day to include the entire end date
+                date_to_obj = datetime.fromisoformat(date_to)
+                from datetime import timedelta
+                date_to_end = date_to_obj + timedelta(days=1)
+                query = query.filter(Article.published_at < date_to_end)
+            except ValueError:
+                pass  # Invalid date format, skip filter
         
         return (
             query

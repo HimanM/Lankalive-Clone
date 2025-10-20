@@ -5,6 +5,7 @@ import { getImageUrl } from '../utils/image'
 
 export default function Home() {
   const [articles, setArticles] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     async function load() {
@@ -18,11 +19,19 @@ export default function Home() {
     load()
   }, [])
 
+  // Filter articles by search query
+  const filteredArticles = searchQuery.trim() 
+    ? articles.filter(article => 
+        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.summary?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : articles
+
   // Split articles for different sections
-  const hotNews = articles.slice(0, 5)
-  const featuredArticle = articles[0]
-  const latestArticles = articles.slice(1, 7)
-  const moreArticles = articles.slice(7)
+  const hotNews = filteredArticles.slice(0, 5)
+  const featuredArticle = filteredArticles[0]
+  const latestArticles = filteredArticles.slice(1, 7)
+  const moreArticles = filteredArticles.slice(7)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -45,6 +54,37 @@ export default function Home() {
       )}
 
       <div className="container mx-auto px-4 py-8">
+        {/* Search Bar */}
+        <div className="max-w-3xl mx-auto mb-8">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search news articles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-6 py-4 pl-14 text-lg border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm transition-all"
+            />
+            <svg className="absolute left-5 top-5 h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+              >
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <p className="text-sm text-gray-600 mt-2 text-center">
+              Found {filteredArticles.length} article{filteredArticles.length !== 1 ? 's' : ''}
+            </p>
+          )}
+        </div>
+
         {/* Hero Section - Featured Article */}
         {featuredArticle && (
           <section className="mb-12">
@@ -105,9 +145,19 @@ export default function Home() {
         )}
 
         {/* No articles message */}
-        {articles.length === 0 && (
+        {filteredArticles.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No articles yet</p>
+            <p className="text-gray-500 text-lg">
+              {searchQuery ? `No articles found for "${searchQuery}"` : 'No articles yet'}
+            </p>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Clear Search
+              </button>
+            )}
           </div>
         )}
       </div>
