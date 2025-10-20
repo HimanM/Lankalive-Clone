@@ -79,9 +79,16 @@ jobs:
             echo "🔐 Setting permissions..."
             chmod 755 backend/static/uploads
             
+            # Install Docker Compose V2 if not available
+            if ! command -v docker compose &> /dev/null; then
+              echo "📦 Installing Docker Compose V2..."
+              sudo apt update
+              sudo apt install -y docker-compose-plugin
+            fi
+            
             # Stop containers (keep volumes and images)
             echo "🛑 Stopping containers..."
-            docker-compose stop || true
+            docker compose stop || true
             
             # Pull images with retry logic (handle Docker Hub issues)
             echo "📥 Pulling Docker images..."

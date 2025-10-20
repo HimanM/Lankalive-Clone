@@ -38,6 +38,8 @@ services:
       # Development mode
       DEV: ${DEV:-false}
       DOMAIN: ${DOMAIN:-}
+    ports:
+      - "8000:8000"  # Expose backend for Nginx reverse proxy
     volumes:
       - ./backend/static:/app/static
       - ./backend/.env:/app/.env:ro
