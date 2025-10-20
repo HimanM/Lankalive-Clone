@@ -42,8 +42,8 @@ git pull origin main
 # Stop containers
 docker-compose down
 
-# Rebuild with correct API URL
-export VITE_API_BASE=http://lankalive.himanmanduja.fun:49155
+# Rebuild with correct API URL (use https if you have SSL/Certbot)
+export VITE_API_BASE=https://lankalive.himanmanduja.fun
 docker-compose build --no-cache frontend
 
 # Start everything
@@ -102,8 +102,8 @@ cd ~/Lankalive-Clone
 # Edit .env
 nano .env
 
-# Add this line:
-VITE_API_BASE=http://lankalive.himanmanduja.fun:49155
+# Add this line (use https if you have SSL/Certbot):
+VITE_API_BASE=https://lankalive.himanmanduja.fun
 
 # Save (Ctrl+O, Enter, Ctrl+X)
 
@@ -177,11 +177,18 @@ DOMAIN=
 VITE_API_BASE=http://127.0.0.1:8000
 ```
 
-### VPS Deployment (.env):
+### VPS Deployment with Nginx Reverse Proxy + SSL (.env):
 ```bash
 DEV=false
 DOMAIN=lankalive.himanmanduja.fun
-VITE_API_BASE=http://lankalive.himanmanduja.fun:49155
+VITE_API_BASE=https://lankalive.himanmanduja.fun
+```
+
+### VPS Deployment without Reverse Proxy (.env):
+```bash
+DEV=false
+DOMAIN=123.45.67.89
+VITE_API_BASE=http://123.45.67.89:49155
 ```
 
 ### Docker Compose (picks from .env):

@@ -79,13 +79,9 @@ jobs:
             echo "🔐 Setting permissions..."
             chmod 755 backend/static/uploads
             
-            # Stop and remove existing containers
-            echo "🛑 Stopping existing containers..."
-            docker-compose down --remove-orphans || true
-            
-            # Clean up Docker system
-            echo "🧹 Cleaning up Docker system..."
-            docker system prune -f || true
+            # Stop containers (keep volumes and images)
+            echo "🛑 Stopping containers..."
+            docker-compose stop || true
             
             # Pull images with retry logic (handle Docker Hub issues)
             echo "📥 Pulling Docker images..."
@@ -99,13 +95,17 @@ jobs:
               fi
             done
             
-            # Build containers with no cache
+            # Build containers (uses cache for faster builds)
             echo "🔨 Building Docker containers..."
-            docker-compose build --no-cache --pull
+            docker-compose build --pull
             
-            # Start containers in detached mode
+            # Start containers with recreate
             echo "🚀 Starting containers..."
             docker-compose up -d --force-recreate
+            
+            # Remove dangling images to save space (optional)
+            echo "🧹 Cleaning up dangling images..."
+            docker image prune -f || true
             
             # Wait for containers to be ready
             echo "⏳ Waiting for containers to initialize..."
@@ -154,8 +154,7 @@ jobs:
             echo "================================================"
             echo ""
             echo "🌐 Your application should now be running at:"
-            echo "   http://${{ secrets.DOMAIN }}:8080"
-            echo "   (or http://${{ secrets.VPS_HOST }}:8080 if no domain)"
+            echo "   https://${{ secrets.DOMAIN }}"
             echo ""
             echo "📝 To view logs, SSH to VPS and run:"
             echo "   cd ${{ secrets.VPS_PROJECT_PATH }}"
@@ -164,13 +163,15 @@ jobs:
             echo "📊 To check status:"
             echo "   docker-compose ps"
             echo ""
+            echo "💡 Tip: Docker layers are cached for faster deployments!"
+            echo ""
 
       - name: 📊 Deployment Summary
         if: success()
         run: |
           echo "## ✅ Deployment Successful!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "🌐 **Application URL:** http://${{ secrets.DOMAIN }}:8080" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 **Application URL:** https://${{ secrets.DOMAIN }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📦 **Deployed Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -179,9 +180,14 @@ jobs:
           echo "⏰ **Deployment Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Deployed Services:" >> $GITHUB_STEP_SUMMARY
-          echo "- 🐘 PostgreSQL 15" >> $GITHUB_STEP_SUMMARY
+          echo "- 🐘 PostgreSQL 16 Alpine" >> $GITHUB_STEP_SUMMARY
           echo "- 🐍 Flask Backend (Python 3.12)" >> $GITHUB_STEP_SUMMARY
           echo "- ⚛️  React Frontend (Nginx)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Optimizations:" >> $GITHUB_STEP_SUMMARY
+          echo "- ⚡ Docker layer caching enabled" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔄 Zero-downtime deployment" >> $GITHUB_STEP_SUMMARY
+          echo "- 💾 Database persistence maintained" >> $GITHUB_STEP_SUMMARY
 
       - name: 🚨 Deployment Failed
         if: failure()

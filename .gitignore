@@ -11,3 +11,7 @@ __pycache__
 fix-api-url.sh
 README.md
 .env.example
+/FRONTEND_API_FIX.md
+FRONTEND_API_FIX.md
+SECRETS.md
+

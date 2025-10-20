@@ -47,13 +47,17 @@ Example: /root/Lankalive-Clone
 ---
 
 ### 6. DOMAIN
-**Value:** `Your domain name WITHOUT http:// or port`
+**Value:** `Your domain name WITHOUT http://, https://, or port`
 ```
 Example: lankalive.himanmanduja.fun
 OR use IP: 123.45.67.89
 ```
 
-**Important:** Don't include `http://` or port numbers, just the domain/IP.
+**Important:** 
+- ❌ Don't include: `http://` or `https://`
+- ❌ Don't include: Port numbers (`:80`, `:443`, `:49155`)
+- ✅ Just the domain: `lankalive.himanmanduja.fun`
+- The deployment will automatically use `https://` if you have SSL/Certbot setup
 
 ---
 

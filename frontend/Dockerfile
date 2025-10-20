@@ -3,18 +3,18 @@ FROM node:20-alpine as build
 
 WORKDIR /app
 
-# Accept build argument for API URL
-ARG VITE_API_BASE
-ENV VITE_API_BASE=$VITE_API_BASE
-
-# Copy package files
+# Copy package files first (for better layer caching)
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (this layer will be cached if package.json doesn't change)
+RUN npm ci --prefer-offline --no-audit
 
 # Copy source code
 COPY . .
+
+# Accept build argument for API URL (after npm ci to avoid cache invalidation)
+ARG VITE_API_BASE
+ENV VITE_API_BASE=$VITE_API_BASE
 
 # Build the application with environment variable
 RUN npm run build
