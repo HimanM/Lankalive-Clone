@@ -17,10 +17,8 @@ export default function Media(){
 
   async function load(q=''){
     try{
-      const url = '/api/media/' + (q ? `?q=${encodeURIComponent(q)}` : '')
-      const res = await fetch((import.meta.env.VITE_API_BASE||'http://127.0.0.1:8000') + url)
-      const json = await res.json()
-      setList(json)
+      const list = await api.listMedia({ q }).catch(() => [])
+      setList(list)
     }catch(e){ setList([]) }
   }
 
