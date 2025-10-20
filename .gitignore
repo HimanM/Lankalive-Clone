@@ -8,3 +8,6 @@ __pycache__
 /SECRETS.md
 /DEPLOYMENT_CHECKLIST.md
 /DOCKER_TROUBLESHOOTING.md
+fix-api-url.sh
+README.md
+.env.example

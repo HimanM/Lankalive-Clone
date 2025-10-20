@@ -64,8 +64,8 @@ jobs:
             POSTGRES_DB=lankalive
             
             # Frontend API Configuration
-            # Use domain if provided, otherwise use internal Docker network
-            VITE_API_BASE=http://${{ secrets.DOMAIN }}:49155
+            # Use domain with HTTPS (Nginx reverse proxy handles SSL)
+            VITE_API_BASE=https://${{ secrets.DOMAIN }}
             EOF
             
             echo "✅ .env file created successfully"

@@ -250,7 +250,13 @@ FLASK_ENV=production
 SECRET_KEY=<generate-strong-key>
 JWT_SECRET=<generate-strong-key>
 POSTGRES_PASSWORD=<strong-password>
+VITE_API_BASE=https://yourdomain.com
 ```
+
+**Important:** 
+- Use `https://` if you have SSL/TLS (Certbot)
+- Use `http://` only for local development
+- Don't include port numbers if using Nginx reverse proxy
 
 3. Generate secure keys:
 ```bash
