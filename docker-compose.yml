@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: lankalive_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: lankalive
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql_script/init_schema.sql:/docker-entrypoint-initdb.d/01-init_schema.sql
+      - ./sql_script/sample_data.sql:/docker-entrypoint-initdb.d/02-sample_data.sql
+    networks:
+      - lankalive_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lankalive_backend
+    environment:
+      # Database configuration - will be overridden if DEV=false
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/lankalive}
+      # Flask configuration
+      FLASK_ENV: ${FLASK_ENV:-production}
+      SECRET_KEY: ${SECRET_KEY:-change-this-secret-key-in-production}
+      JWT_SECRET: ${JWT_SECRET:-change-this-jwt-secret-in-production}
+      # Development mode
+      DEV: ${DEV:-false}
+      DOMAIN: ${DOMAIN:-}
+    volumes:
+      - ./backend/static:/app/static
+      - ./backend/.env:/app/.env:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lankalive_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lankalive_frontend
+    environment:
+      # Backend API URL - internal Docker network
+      VITE_API_URL: http://backend:8000
+    ports:
+      - "8080:80"  # Uncommon port as requested
+    depends_on:
+      - backend
+    networks:
+      - lankalive_network
+    restart: unless-stopped
+
+networks:
+  lankalive_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

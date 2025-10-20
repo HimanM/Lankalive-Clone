@@ -3,3 +3,4 @@
 __pycache__
 *.pyc
 /backend/.pytest_cache
+/backend/static/uploads

@@ -2,12 +2,14 @@ from sqlalchemy import Column, String, Integer, Text, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from app.models.base import Base
+import uuid
 
 
 class MediaAsset(Base):
 	__tablename__ = 'media_assets'
 
-	id = Column(UUID(as_uuid=True), primary_key=True)
+	# generate UUID on the Python side so it's available before flush/commit
+	id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 	type = Column(String(50), nullable=False)
 	file_name = Column(String(1024), nullable=False)
 	url = Column(String(2048), nullable=False)

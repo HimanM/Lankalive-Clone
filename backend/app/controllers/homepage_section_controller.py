@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.config.session import SessionLocal
 from app.services.homepage_section_service import HomepageSectionService
 from app.models.homepage_section import HomepageSection
+from app.controllers.decorators import requires_role
 
 bp = Blueprint('homepage_sections', __name__, url_prefix='/api/homepage_sections')
 
@@ -15,6 +16,7 @@ def list_sections():
 
 
 @bp.route('/', methods=['POST'])
+@requires_role('admin')
 def create_section():
     data = request.json or {}
     s = HomepageSection(key=data.get('key'), title=data.get('title'), layout_type=data.get('layout_type'))

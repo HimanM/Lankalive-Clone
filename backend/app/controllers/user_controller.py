@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.config.session import SessionLocal
 from app.services.user_service import UserService
 from app.models.user import User
+from app.controllers.decorators import requires_role
 
 bp = Blueprint('users', __name__, url_prefix='/api/users')
 
@@ -16,6 +17,7 @@ def list_users():
 
 
 @bp.route('/', methods=['POST'])
+@requires_role('admin')
 def create_user():
     data = request.json or {}
     u = User(name=data.get('name'), email=data.get('email'), password_hash=data.get('password_hash'))

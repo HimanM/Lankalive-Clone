@@ -3,6 +3,7 @@ from app.config.session import SessionLocal
 from app.services.homepage_section_item_service import HomepageSectionItemService
 from app.models.homepage_section_item import HomepageSectionItem
 from uuid import UUID
+from app.controllers.decorators import requires_role
 
 bp = Blueprint('homepage_section_items', __name__, url_prefix='/api/homepage_section_items')
 
@@ -16,6 +17,7 @@ def list_items(section_id: str):
 
 
 @bp.route('/', methods=['POST'])
+@requires_role('admin')
 def create_item():
     data = request.json or {}
     item = HomepageSectionItem(section_id=data.get('section_id'), article_id=data.get('article_id'), order_index=data.get('order_index', 0))
