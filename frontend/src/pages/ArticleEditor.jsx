@@ -22,6 +22,7 @@ export default function ArticleEditor() {
     caption: '',
     credit: ''
   })
+  const [errors, setErrors] = useState({})
 
   const [formData, setFormData] = useState({
     title: '',
@@ -161,6 +162,28 @@ export default function ArticleEditor() {
     e.preventDefault()
     setSaving(true)
 
+    // Client-side validation for required fields
+    const validationErrors = {}
+    if (!formData.title || formData.title.trim() === '') validationErrors.title = 'Title is required.'
+    if (!formData.summary || formData.summary.trim() === '') validationErrors.summary = 'Summary is required.'
+    if (!formData.body || formData.body.trim() === '') validationErrors.body = 'Content/body is required.'
+    if (!formData.slug || formData.slug.trim() === '') validationErrors.slug = 'Slug (URL) is required.'
+    if (!formData.primary_category_id || formData.primary_category_id === '') validationErrors.primary_category_id = 'Primary category is required.'
+    // If publishing, published_at should be set
+    if (formData.status === 'published' && !formData.published_at) validationErrors.published_at = 'Published date/time is required when status is published.'
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      setSaving(false)
+      // Scroll to top of form so user sees error
+      const el = document.querySelector('form')
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+
+    // clear errors
+    setErrors({})
+
     try {
       if (isNew) {
         await api.createArticle(formData)
@@ -210,6 +233,7 @@ export default function ArticleEditor() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Enter article title"
             />
+            {errors.title && <p className="text-sm text-red-600 mt-2">{errors.title}</p>}
           </div>
 
           {/* Slug */}
@@ -234,6 +258,7 @@ export default function ArticleEditor() {
                 Generate
               </button>
             </div>
+            {errors.slug && <p className="text-sm text-red-600 mt-2">{errors.slug}</p>}
           </div>
 
           {/* Summary */}
@@ -250,6 +275,7 @@ export default function ArticleEditor() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Brief summary of the article"
             />
+            {errors.summary && <p className="text-sm text-red-600 mt-2">{errors.summary}</p>}
           </div>
 
           {/* Body */}
@@ -266,6 +292,7 @@ export default function ArticleEditor() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent font-mono text-sm"
               placeholder="Article content (HTML supported)"
             />
+            {errors.body && <p className="text-sm text-red-600 mt-2">{errors.body}</p>}
           </div>
 
           {/* Hero Image */}
@@ -328,6 +355,7 @@ export default function ArticleEditor() {
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
+            {errors.primary_category_id && <p className="text-sm text-red-600 mt-2">{errors.primary_category_id}</p>}
           </div>
 
           {/* Additional Categories */}
@@ -404,6 +432,7 @@ export default function ArticleEditor() {
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
+              {errors.published_at && <p className="text-sm text-red-600 mt-2">{errors.published_at}</p>}
             </div>
           )}
 
