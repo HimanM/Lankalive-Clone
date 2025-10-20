@@ -70,12 +70,12 @@ export default function Home() {
   // Use the latest highlighted article as featured, or fallback to first article
   const featuredArticle = highlightedArticles.length > 0 ? highlightedArticles[0] : filteredArticles[0]
   
-  // Get 12 latest articles sorted by published_at (most recent first)
+  // Get 6 latest articles sorted by published_at (most recent first)
   const latestArticles = [...filteredArticles]
     .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
-    .slice(0, 12)
+    .slice(0, 6)
   
-  const moreArticles = filteredArticles.slice(12)
+  const moreArticles = filteredArticles.slice(6)
 
   return (
     <div className="min-h-screen bg-gray-50">
