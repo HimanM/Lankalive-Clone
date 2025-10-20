@@ -1,6 +1,37 @@
-# Lanka Live Clone
+# Lanka Live Clone - Full-Stack News CMS
 
-A full-featured news CMS clone built as a portfolio project.
+[![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge&logo=vercel)](https://lankalive.himanmanduja.fun/)
+[![Deploy Lanka Live Clone to VPS](https://github.com/HimanM/Lankalive-Clone/actions/workflows/deploy.yml/badge.svg)](https://github.com/HimanM/Lankalive-Clone/actions/workflows/deploy.yml)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.0-000000?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/license-MIT-orange?style=for-the-badge)](LICENSE)
+
+A modern, full-featured news content management system built with React, Flask, and PostgreSQL. This portfolio project demonstrates professional web development practices including role-based access control, media management, and containerized deployment.
+
+**🌐 Live Demo:** [https://lankalive.himanmanduja.fun/](https://lankalive.himanmanduja.fun/)
+
+## Overview
+
+This CMS platform enables administrators to create, edit, and manage news content with a clean, responsive interface. Currently configured for single admin use, the architecture is designed to scale for multiple users with different permission levels.
+
+### Key Features
+
+- **Admin Dashboard**: Secure login system with JWT authentication for content management
+- **Rich Content Editor**: Create and edit articles with media uploads and categorization
+- **Responsive Design**: Modern UI built with React 18 and Tailwind CSS 4
+- **Search & Filter**: Advanced search functionality with date range filtering
+- **Media Management**: Inline image uploads with automatic optimization
+- **Role-Based Access**: Secure admin-only content management (scalable to multi-user system)
+- **Production Ready**: Dockerized deployment with Nginx, Gunicorn, and PostgreSQL
+
+### Architecture Highlights
+
+- **Scalable Design**: Built with multi-user capability in mind - easily extendable for team content management
+- **Separation of Concerns**: Clean MVC architecture with DAOs, services, and controllers
+- **Modern Stack**: React 18 + Vite 7, Flask 3.0, PostgreSQL 16, Docker Compose
+- **CI/CD Pipeline**: Automated deployment via GitHub Actions
 
 ## Tech Stack
 
@@ -404,4 +435,6 @@ This is a portfolio clone project created for educational purposes. It is not af
 
 ## License
 
-This is a portfolio project. All rights reserved.
+MIT License - See [LICENSE](LICENSE) file for details.
+
+This project is open source and available for educational purposes.
