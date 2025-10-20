@@ -45,7 +45,7 @@ export default function ArticleEditor() {
     Promise.all([
       api.listCategories(),
       api.listTags(),
-      api.listMedia().catch(() => []),
+      api.listMedia().then(r => Array.isArray(r) ? r : (r && r.items ? r.items : [])).catch(() => []),
     ])
       .then(([cats, tgs, med]) => {
         setCategories(cats)
@@ -143,7 +143,7 @@ export default function ArticleEditor() {
       
       // Reload media list
       const updatedMedia = await api.listMedia().catch(() => [])
-      setMedia(updatedMedia)
+  setMedia(Array.isArray(updatedMedia) ? updatedMedia : (updatedMedia && updatedMedia.items ? updatedMedia.items : []))
       
       // Close modal and reset
       setUploadModalOpen(false)
@@ -323,7 +323,7 @@ export default function ArticleEditor() {
               {mediaPickerOpen && (
                 <div className="mt-4 border p-3 rounded bg-white">
                   <div className="mb-2 flex gap-2">
-                    <input placeholder="Search media..." className="flex-1 border px-2 py-1" onChange={async (e) => { const q = e.target.value; const list = await api.listMedia({ q }).catch(()=>[]); setMedia(list) }} />
+                    <input placeholder="Search media..." className="flex-1 border px-2 py-1" onChange={async (e) => { const q = e.target.value; const resp = await api.listMedia({ q }).catch(()=>[]); const list = Array.isArray(resp) ? resp : (resp && resp.items ? resp.items : []); setMedia(list) }} />
                   </div>
                   <div className="grid grid-cols-4 gap-3">
                     {media.map(m => (
