@@ -109,6 +109,12 @@ export async function uploadMedia(file, meta = {}) {
   const opts = { method: 'POST', headers: { ...authHeaders() }, body: fd }
   return request('/api/media/upload', opts)
 }
+export function checkMediaUsage(mediaId) {
+  return request(`/api/media/${mediaId}/check-usage`, { headers: authHeaders() })
+}
+export function deleteMedia(mediaId) {
+  return request(`/api/media/${mediaId}`, { method: 'DELETE', headers: authHeaders() })
+}
 
 // Users
 export function listUsers() { return request('/api/users/') }
@@ -144,6 +150,8 @@ export default {
   deleteTag,
   listMedia,
   uploadMedia,
+  checkMediaUsage,
+  deleteMedia,
   listUsers,
   createUser,
   updateUser,

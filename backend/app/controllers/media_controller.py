@@ -7,6 +7,7 @@ import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from PIL import Image
+from uuid import UUID
 
 bp = Blueprint('media', __name__, url_prefix='/api/media')
 
@@ -96,3 +97,62 @@ def upload_media():
             'credit': created.credit,
             'created_at': created.created_at.isoformat() if created.created_at else None,
         }), 201
+
+
+@bp.route('/<media_id>/check-usage', methods=['GET'])
+@requires_role('admin')
+def check_media_usage(media_id):
+    """Check if media is used in any published articles"""
+    try:
+        media_uuid = UUID(media_id)
+    except ValueError:
+        return jsonify({'error': 'invalid media id'}), 400
+    
+    with SessionLocal() as session:
+        svc = MediaService(session)
+        media = svc.get(media_uuid)
+        if not media:
+            return jsonify({'error': 'media not found'}), 404
+        
+        usage_info = svc.check_usage_in_published_articles(media)
+        return jsonify(usage_info)
+
+
+@bp.route('/<media_id>', methods=['DELETE'])
+@requires_role('admin')
+def delete_media(media_id):
+    """Delete media if not used in published articles"""
+    try:
+        media_uuid = UUID(media_id)
+    except ValueError:
+        return jsonify({'error': 'invalid media id'}), 400
+    
+    with SessionLocal() as session:
+        svc = MediaService(session)
+        media = svc.get(media_uuid)
+        if not media:
+            return jsonify({'error': 'media not found'}), 404
+        
+        # Check if media is used in published articles
+        usage_info = svc.check_usage_in_published_articles(media)
+        if not usage_info['can_delete']:
+            return jsonify({
+                'error': 'Cannot delete media used in published articles',
+                'articles': usage_info['articles']
+            }), 400
+        
+        # Delete the physical file if it exists
+        if media.url:
+            try:
+                # Convert URL to file path
+                # URL format: /static/uploads/2025/10/filename.jpg
+                rel_path = media.url.replace('/static/', '')
+                file_path = os.path.join(BACKEND_DIR, 'static', rel_path.replace('/', os.sep))
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            except Exception as e:
+                print(f"Error deleting file: {e}")
+        
+        # Delete from database
+        svc.delete(media)
+        return jsonify({'message': 'Media deleted successfully'}), 200

@@ -13,6 +13,7 @@ export default function Media(){
     caption: '',
     credit: ''
   })
+  const [deleteModal, setDeleteModal] = useState(null) // { media, usageInfo }
 
   async function load(q=''){
     try{
@@ -38,6 +39,33 @@ export default function Media(){
     }catch(e){
       setMessage({text: 'Upload failed: ' + (e.message||e)})
     }finally{ setLoading(false) }
+  }
+
+  async function handleDeleteClick(media) {
+    setLoading(true)
+    try {
+      const usageInfo = await api.checkMediaUsage(media.id)
+      setDeleteModal({ media, usageInfo })
+    } catch(e) {
+      setMessage({text: 'Error checking media usage: ' + (e.message||e)})
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function confirmDelete() {
+    if (!deleteModal) return
+    setLoading(true)
+    try {
+      await api.deleteMedia(deleteModal.media.id)
+      setMessage({text: `✓ Media "${deleteModal.media.file_name}" deleted successfully`})
+      setDeleteModal(null)
+      await load(q)
+    } catch(e) {
+      setMessage({text: 'Delete failed: ' + (e.message||e)})
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -173,12 +201,81 @@ export default function Media(){
                   >
                     Copy URL
                   </button>
+                  <button 
+                    onClick={() => handleDeleteClick(m)}
+                    disabled={loading}
+                    className="w-full mt-2 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              {deleteModal.usageInfo.can_delete ? 'Confirm Delete' : 'Cannot Delete Media'}
+            </h3>
+            
+            {deleteModal.usageInfo.can_delete ? (
+              <>
+                <p className="text-gray-700 mb-4">
+                  Are you sure you want to delete <strong>{deleteModal.media.file_name}</strong>?
+                </p>
+                <p className="text-sm text-gray-600 mb-6">
+                  This action cannot be undone. The media file will be permanently removed from the server.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setDeleteModal(null)}
+                    className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmDelete}
+                    disabled={loading}
+                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                  >
+                    {loading ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-gray-700 mb-4">
+                  <strong>{deleteModal.media.file_name}</strong> cannot be deleted because it is used in the following published article{deleteModal.usageInfo.articles.length > 1 ? 's' : ''}:
+                </p>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 max-h-48 overflow-y-auto">
+                  <ul className="space-y-2">
+                    {deleteModal.usageInfo.articles.map(article => (
+                      <li key={article.id} className="text-sm">
+                        <div className="font-medium text-gray-900">{article.title}</div>
+                        <div className="text-gray-600">Status: {article.status}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="text-sm text-gray-600 mb-6">
+                  To delete this media, you must first archive or unpublish the article{deleteModal.usageInfo.articles.length > 1 ? 's' : ''} listed above.
+                </p>
+                <button
+                  onClick={() => setDeleteModal(null)}
+                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
+                >
+                  Close
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
