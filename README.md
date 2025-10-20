@@ -18,7 +18,7 @@ A full-featured news CMS clone built as a portfolio project.
 - Tailwind CSS 4
 
 ### Docker Stack
-- PostgreSQL 15-alpine
+- PostgreSQL 16-alpine
 - Python 3.12-slim
 - Node 20-alpine + Nginx-alpine (multi-stage build)
 
