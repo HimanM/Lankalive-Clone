@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/lankalive')
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5433/lankalive')
 
 
 def get_engine() -> Engine:

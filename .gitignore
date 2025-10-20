@@ -1,1 +1,4 @@
 /__temp_pipreqsnb_folder
+/.env
+__pycache__
+*.pyc
