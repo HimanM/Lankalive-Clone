@@ -17,6 +17,7 @@ UPLOAD_DIR = os.getenv('UPLOAD_DIR', None) or os.path.join(BACKEND_DIR, 'static'
 
 
 @bp.route('/', methods=['GET'])
+@requires_role('admin')
 def list_media():
     q = request.args.get('q')
     limit = int(request.args.get('limit', 50))

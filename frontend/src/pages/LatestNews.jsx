@@ -6,10 +6,10 @@ import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
 
 export default function LatestNews() {
-  useScrollToTop([currentPage])
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  useScrollToTop([currentPage])
   const articlesPerPage = 8
   
   // Filter states
