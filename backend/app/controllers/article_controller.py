@@ -35,7 +35,20 @@ def get_article(slug):
         a = svc.dao.get_by_slug(slug)
         if not a:
             return jsonify({'error': 'not found'}), 404
-        return jsonify({'id': str(a.id), 'title': a.title, 'body': a.body_richtext, 'slug': a.slug})
+        # serialize related fields
+        categories = [{'id': str(c.id), 'name': c.name, 'slug': c.slug} for c in (a.categories or [])]
+        tags = [{'id': str(t.id), 'name': t.name, 'slug': t.slug} for t in (a.tags or [])]
+        return jsonify({
+            'id': str(a.id),
+            'title': a.title,
+            'slug': a.slug,
+            'summary': a.summary,
+            'body': a.body_richtext,
+            'hero_image_url': a.hero_image_url,
+            'published_at': a.published_at.isoformat() if a.published_at else None,
+            'categories': categories,
+            'tags': tags,
+        })
 
 
 @bp.route('/', methods=['POST'])
