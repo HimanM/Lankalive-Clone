@@ -1,8 +1,14 @@
 import { getToken, authHeaders, clearToken } from '../utils/auth'
 
-// In production (Docker), API calls go through Nginx proxy at same origin
-// In development, use explicit backend URL
-const API_BASE = import.meta.env.VITE_API_BASE || ''
+// Resolve API base URL:
+// - VITE_API_BASE explicitly set during build/development (highest priority)
+// - VITE_DOMAIN (if provided) will be used as https://<domain>
+// - empty string means same-origin (use nginx proxy in production)
+const API_BASE = (() => {
+  if (import.meta.env.VITE_API_BASE) return import.meta.env.VITE_API_BASE
+  if (import.meta.env.VITE_DOMAIN) return `https://${import.meta.env.VITE_DOMAIN}`
+  return ''
+})()
 
 async function request(path, opts = {}) {
   const url = API_BASE + path
@@ -117,7 +123,17 @@ export function listMedia(params = {}) {
 }
 export async function uploadMedia(file, meta = {}) {
   const fd = new FormData()
-  fd.append('file', file)
+  // Ensure uploaded files get a unique filename to avoid collisions and 'image.png' duplicates
+  try {
+    const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2,8)}`
+    const newName = `${uniqueSuffix}-${file.name}`
+    // Create a new File object with the unique name (browsers support File constructor)
+    const renamed = new File([file], newName, { type: file.type })
+    fd.append('file', renamed)
+  } catch (e) {
+    // If File constructor not available, fallback to original file
+    fd.append('file', file)
+  }
   if (meta.alt_text) fd.append('alt_text', meta.alt_text)
   if (meta.caption) fd.append('caption', meta.caption)
   if (meta.credit) fd.append('credit', meta.credit)
