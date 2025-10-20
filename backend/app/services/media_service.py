@@ -17,6 +17,9 @@ class MediaService:
     def list(self, limit: int = 100, offset: int = 0, q: str = None) -> List[MediaAsset]:
         return self.dao.list(limit=limit, offset=offset, q=q)
 
+    def list_with_count(self, limit: int = 100, offset: int = 0, q: str = None):
+        return self.dao.list_with_count(limit=limit, offset=offset, q=q)
+
     def create(self, media: MediaAsset) -> MediaAsset:
         created = self.dao.create(media)
         self.session.commit()

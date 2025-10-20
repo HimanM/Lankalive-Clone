@@ -14,11 +14,26 @@ export default function Media(){
     credit: ''
   })
   const [deleteModal, setDeleteModal] = useState(null) // { media, usageInfo }
+  const [currentPage, setCurrentPage] = useState(1)
+  const imagesPerPage = 12
+  const [totalItems, setTotalItems] = useState(0)
 
-  async function load(q=''){
+  async function load(q='', page = 1){
     try{
-      const list = await api.listMedia({ q })
-      setList(list)
+      const offset = (page - 1) * imagesPerPage
+      const resp = await api.listMedia({ q, limit: imagesPerPage, offset })
+      // Backend now returns { items, total }
+      if (resp && resp.items) {
+        setList(resp.items)
+        setTotalItems(resp.total || 0)
+      } else if (Array.isArray(resp)) {
+        // backward compatibility
+        setList(resp)
+        setTotalItems(resp.length)
+      } else {
+        setList([])
+        setTotalItems(0)
+      }
     }catch(e){ 
       console.error('Error loading media:', e)
       setList([])
@@ -26,7 +41,7 @@ export default function Media(){
     }
   }
 
-  useEffect(()=>{ load() }, [])
+  useEffect(()=>{ load(q, currentPage) }, [currentPage])
 
   async function onUpload(e){
     e.preventDefault();
@@ -37,7 +52,8 @@ export default function Media(){
       setFile(null)
       setMetadata({ alt_text: '', caption: '', credit: '' })
       setMessage({text: 'Upload successful', meta: result})
-      await load(q)
+      // reload current page after upload
+      await load(q, currentPage)
     }catch(e){
       setMessage({text: 'Upload failed: ' + (e.message||e)})
     }finally{ setLoading(false) }
@@ -62,7 +78,11 @@ export default function Media(){
       await api.deleteMedia(deleteModal.media.id)
       setMessage({text: `✓ Media "${deleteModal.media.file_name}" deleted successfully`})
       setDeleteModal(null)
-      await load(q)
+      // After deletion, reload current page. If the page became empty, go back one page
+      await load(q, currentPage)
+      if (list.length === 1 && currentPage > 1) {
+        setCurrentPage(p => Math.max(1, p - 1))
+      }
     } catch(e) {
       setMessage({text: 'Delete failed: ' + (e.message||e)})
     } finally {
@@ -175,7 +195,7 @@ export default function Media(){
 
         {/* Media Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {list.map(m=> (
+            {list.map(m=> (
             <div key={m.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
                 <img 
@@ -275,6 +295,44 @@ export default function Media(){
                 </button>
               </>
             )}
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-center gap-2 mt-8">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-gray-700">Page {currentPage}</span>
+            <button
+              onClick={() => setCurrentPage(p => p + 1)}
+              disabled={list.length < imagesPerPage}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-center gap-2 mt-8">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-gray-700">Page {currentPage} of {Math.max(1, Math.ceil(totalItems / imagesPerPage))}</span>
+            <button
+              onClick={() => setCurrentPage(p => p + 1)}
+              disabled={(currentPage * imagesPerPage) >= totalItems}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
           </div>
         </div>
       )}

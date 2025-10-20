@@ -6,6 +6,7 @@ import { getImageUrl } from '../utils/image'
 export default function Home() {
   const [articles, setArticles] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [categorySections, setCategorySections] = useState([])
 
   useEffect(() => {
     async function load() {
@@ -21,6 +22,30 @@ export default function Home() {
       } catch (e) {
         console.error('Failed to load articles:', e)
         setArticles([]) // Set empty array on error to prevent crashes
+      }
+      // Load category sections (latest 6 per category)
+      try {
+        const cats = await api.listCategories()
+        if (Array.isArray(cats) && cats.length) {
+          // Fetch up to 6 articles per category in parallel
+          const promises = cats.map(async (c) => {
+            try {
+              const arts = await api.listArticles({ category: c.slug, limit: 6, status: 'published' })
+              return { category: c, articles: Array.isArray(arts) ? arts : [] }
+            } catch (err) {
+              console.error('Error loading category articles for', c.slug, err)
+              return { category: c, articles: [] }
+            }
+          })
+          const sections = await Promise.all(promises)
+          // Keep only categories that have at least one article
+          setCategorySections(sections.filter(s => s.articles && s.articles.length > 0))
+        } else {
+          setCategorySections([])
+        }
+      } catch (e) {
+        console.error('Failed to load categories:', e)
+        setCategorySections([])
       }
     }
     load()
@@ -150,6 +175,21 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* Category Sections */}
+        {categorySections.map(({ category, articles: catArticles }) => (
+          <section className="mb-12" key={category.id}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-4">{category.name}</h2>
+              <a href={`/category/${category.slug}`} className="text-red-600 hover:text-red-700 text-sm font-semibold uppercase">View All →</a>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {catArticles.map(article => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+            </div>
+          </section>
+        ))}
 
         {/* More News Section */}
         {moreArticles.length > 0 && (
