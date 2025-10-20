@@ -87,12 +87,23 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Ad Placeholder (Optional) */}
-      <div className="bg-gray-100 rounded-lg p-6 text-center">
-        <p className="text-gray-500 text-sm mb-2">Advertisement</p>
-        <div className="bg-gray-200 h-64 rounded flex items-center justify-center">
-          <span className="text-gray-400">300 x 250</span>
+      {/* Advertisement */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-gray-100 py-2 px-4">
+          <p className="text-gray-600 text-xs font-semibold uppercase tracking-wide">Advertisement</p>
         </div>
+        <a 
+          href="https://www.himanmanduja.fun/" 
+          className="block hover:opacity-90 transition-opacity"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img 
+            src="/ads/sidebar-ad.svg" 
+            alt="Advertisement - Hire Me!" 
+            className="w-full h-auto"
+          />
+        </a>
       </div>
     </aside>
   )

@@ -107,25 +107,27 @@ export default function Home() {
         {/* Hero Section - Featured Article */}
         {featuredArticle && (
           <section className="mb-12">
-            <div className="relative bg-white rounded-lg shadow-lg overflow-hidden group cursor-pointer hover:shadow-xl transition-shadow duration-300">
+            <div className="relative bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300">
               <div className="md:flex md:h-96">
                 {featuredArticle.hero_image_url && (
-                  <div className="md:w-2/3 h-64 md:h-full relative overflow-hidden">
-                    <img 
-                      src={getImageUrl(featuredArticle.hero_image_url)} 
-                      alt={featuredArticle.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  </div>
+                  <a href={`/article/${featuredArticle.slug}`} className="md:w-2/3 h-64 md:h-full block">
+                    <div className="relative overflow-hidden h-full">
+                      <img 
+                        src={getImageUrl(featuredArticle.hero_image_url)} 
+                        alt={featuredArticle.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    </div>
+                  </a>
                 )}
                 <div className="md:w-1/3 p-8 flex flex-col justify-center">
                   <span className="text-red-600 font-semibold text-sm uppercase mb-2">Featured</span>
-                  <h2 className="text-3xl font-bold mb-4 text-gray-900 leading-tight">
-                    <a href={`/article/${featuredArticle.slug}`} className="hover:text-red-600 transition-colors">
+                  <a href={`/article/${featuredArticle.slug}`}>
+                    <h2 className="text-3xl font-bold mb-4 leading-tight text-gray-900 hover:text-red-600 transition-colors duration-200">
                       {featuredArticle.title}
-                    </a>
-                  </h2>
+                    </h2>
+                  </a>
                   <p className="text-gray-600 mb-4 line-clamp-3">{featuredArticle.summary}</p>
                   <div className="flex items-center text-sm text-gray-500">
                     <time>{new Date(featuredArticle.published_at).toLocaleDateString()}</time>
