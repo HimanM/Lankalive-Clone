@@ -93,7 +93,7 @@ jobs:
             # Pull images with retry logic (handle Docker Hub issues)
             echo "📥 Pulling Docker images..."
             for i in {1..3}; do
-              if docker-compose pull; then
+              if docker compose pull; then
                 echo "✅ Images pulled successfully"
                 break
               else
@@ -104,11 +104,11 @@ jobs:
             
             # Build containers (uses cache for faster builds)
             echo "🔨 Building Docker containers..."
-            docker-compose build --pull
+            docker compose build --pull
             
             # Start containers with recreate
             echo "🚀 Starting containers..."
-            docker-compose up -d --force-recreate
+            docker compose up -d --force-recreate
             
             # Remove dangling images to save space (optional)
             echo "🧹 Cleaning up dangling images..."
@@ -121,26 +121,26 @@ jobs:
             # Check container status
             echo ""
             echo "📊 Container Status:"
-            docker-compose ps
+            docker compose ps
             
             # Show recent logs
             echo ""
             echo "📋 Recent PostgreSQL Logs:"
-            docker-compose logs --tail=20 postgres
+            docker compose logs --tail=20 postgres
             
             echo ""
             echo "📋 Recent Backend Logs:"
-            docker-compose logs --tail=20 backend
+            docker compose logs --tail=20 backend
             
             echo ""
             echo "📋 Recent Frontend Logs:"
-            docker-compose logs --tail=20 frontend
+            docker compose logs --tail=20 frontend
             
             # Verify backend health
             echo ""
             echo "🏥 Checking backend health..."
             sleep 5
-            if docker-compose exec -T backend curl -f http://localhost:8000/api/articles 2>/dev/null; then
+            if docker compose exec -T backend curl -f http://localhost:8000/api/articles 2>/dev/null; then
               echo "✅ Backend is responding"
             else
               echo "⚠️  Backend may still be starting up"
@@ -149,7 +149,7 @@ jobs:
             # Check database connection
             echo ""
             echo "💾 Checking database..."
-            if docker-compose exec -T postgres pg_isready -U postgres; then
+            if docker compose exec -T postgres pg_isready -U postgres; then
               echo "✅ Database is ready"
             else
               echo "⚠️  Database connection issue"
@@ -165,12 +165,12 @@ jobs:
             echo ""
             echo "📝 To view logs, SSH to VPS and run:"
             echo "   cd ${{ secrets.VPS_PROJECT_PATH }}"
-            echo "   docker-compose logs -f"
+            echo "   docker compose logs -f"
             echo ""
             echo "📊 To check status:"
-            echo "   docker-compose ps"
+            echo "   docker compose ps"
             echo ""
-            echo "💡 Tip: Docker layers are cached for faster deployments!"
+            echo "💡 Tip: Using Docker Compose V2 for better performance!"
             echo ""
 
       - name: 📊 Deployment Summary
