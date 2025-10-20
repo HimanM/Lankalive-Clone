@@ -54,7 +54,7 @@ export default function Admin() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="admin@lankalive.lk"
+                placeholder="admin@lankaliveclone.lk"
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />

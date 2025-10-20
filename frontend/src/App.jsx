@@ -5,6 +5,8 @@ import Article from './pages/Article'
 import Admin from './pages/Admin'
 import CategoryPage from './pages/CategoryPage'
 import LatestNews from './pages/LatestNews'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 import AdminDashboard from './pages/AdminDashboard'
 import ArticleEditor from './pages/ArticleEditor'
 import ArticlesList from './pages/ArticlesList'
@@ -23,6 +25,8 @@ export default function App() {
         <Route path='/article/:slug' element={<Article />} />
         <Route path='/category/:slug' element={<CategoryPage />} />
         <Route path='/latest-news' element={<LatestNews />} />
+        <Route path='/privacy-policy' element={<PrivacyPolicy />} />
+        <Route path='/terms-of-service' element={<TermsOfService />} />
         <Route path='/admin' element={<Admin />} />
         <Route path='/admin/dashboard' element={<AdminDashboard />} />
         <Route path='/admin/articles' element={<ArticlesList />} />

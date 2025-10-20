@@ -90,8 +90,8 @@ export default function Unauthorized() {
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-600">
             Need access? Contact the administrator at{' '}
-            <a href="mailto:admin@lankalive.lk" className="text-red-600 hover:text-red-700 hover:underline">
-              admin@lankalive.lk
+            <a href="mailto:admin@lankaliveclone.lk" className="text-red-600 hover:text-red-700 hover:underline">
+              admin@lankaliveclone.lk
             </a>
           </p>
         </div>
