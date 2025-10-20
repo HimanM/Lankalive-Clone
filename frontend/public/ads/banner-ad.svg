@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 728 90">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bannerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DC2626;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="728" height="90" fill="url(#bannerGrad)"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="50" cy="45" r="30" fill="white" opacity="0.15"/>
+  <circle cx="678" cy="45" r="30" fill="white" opacity="0.15"/>
+  
+  <!-- Main text -->
+  <text x="364" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">
+    ADVERTISE YOUR BRAND HERE
+  </text>
+  
+  <!-- Call to action button -->
+  <rect x="284" y="50" width="160" height="30" rx="15" fill="white"/>
+  <text x="364" y="72" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#DC2626" text-anchor="middle">
+    Get Started Today
+  </text>
+</svg>

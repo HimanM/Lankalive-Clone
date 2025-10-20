@@ -56,7 +56,7 @@ export default function Admin() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="admin@lankaliveclone.lk"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent placeholder:text-gray-400"
               />
             </div>
 
@@ -70,7 +70,7 @@ export default function Admin() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent placeholder:text-gray-400"
               />
             </div>
 
