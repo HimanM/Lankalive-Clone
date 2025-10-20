@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import api from '../api'
 import { getImageUrl } from '../utils/image'
 import Sidebar from '../components/Sidebar'
+import FeaturedArticles from '../components/FeaturedArticles'
 
 export default function Article() {
   const { slug } = useParams()
@@ -103,7 +104,10 @@ export default function Article() {
 
         {/* Sidebar - 1/3 width */}
         <div className="lg:col-span-1">
-          <Sidebar />
+          <div className="space-y-6">
+            <FeaturedArticles limit={3} />
+            <Sidebar />
+          </div>
         </div>
       </div>
     </div>

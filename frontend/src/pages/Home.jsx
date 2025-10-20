@@ -29,7 +29,15 @@ export default function Home() {
 
   // Split articles for different sections
   const hotNews = filteredArticles.slice(0, 5)
-  const featuredArticle = filteredArticles[0]
+  
+  // Get featured/highlighted articles sorted by latest (published_at)
+  const highlightedArticles = filteredArticles
+    .filter(article => article.is_featured)
+    .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+  
+  // Use the latest highlighted article as featured, or fallback to first article
+  const featuredArticle = highlightedArticles.length > 0 ? highlightedArticles[0] : filteredArticles[0]
+  
   const latestArticles = filteredArticles.slice(1, 7)
   const moreArticles = filteredArticles.slice(7)
 

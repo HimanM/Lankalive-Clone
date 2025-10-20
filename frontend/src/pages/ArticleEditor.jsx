@@ -12,8 +12,16 @@ export default function ArticleEditor() {
   const [tags, setTags] = useState([])
   const [media, setMedia] = useState([])
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false)
+  const [uploadModalOpen, setUploadModalOpen] = useState(false)
   const [loading, setLoading] = useState(!isNew)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [uploadFile, setUploadFile] = useState(null)
+  const [uploadMetadata, setUploadMetadata] = useState({
+    alt_text: '',
+    caption: '',
+    credit: ''
+  })
 
   const [formData, setFormData] = useState({
     title: '',
@@ -95,6 +103,58 @@ export default function ArticleEditor() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '')
     setFormData(prev => ({ ...prev, slug }))
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setUploadFile(file)
+    }
+  }
+
+  const handlePaste = (e) => {
+    const items = e.clipboardData?.items
+    if (!items) return
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile()
+        if (file) {
+          setUploadFile(file)
+          e.preventDefault()
+        }
+      }
+    }
+  }
+
+  const handleUploadMedia = async () => {
+    if (!uploadFile) {
+      alert('Please select or paste an image')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const result = await api.uploadMedia(uploadFile, uploadMetadata)
+      
+      // Set the uploaded image as hero image
+      setFormData(prev => ({ ...prev, hero_image_url: result.url }))
+      
+      // Reload media list
+      const updatedMedia = await api.listMedia().catch(() => [])
+      setMedia(updatedMedia)
+      
+      // Close modal and reset
+      setUploadModalOpen(false)
+      setUploadFile(null)
+      setUploadMetadata({ alt_text: '', caption: '', credit: '' })
+      
+      alert('Image uploaded successfully!')
+    } catch (error) {
+      alert('Upload failed: ' + error.message)
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -222,7 +282,8 @@ export default function ArticleEditor() {
               placeholder="https://example.com/image.jpg"
             />
               <div className="flex items-center gap-2 mt-2">
-                <button type="button" onClick={() => setMediaPickerOpen(open => !open)} className="px-3 py-1 bg-gray-200 rounded">{mediaPickerOpen ? 'Close media' : 'Choose from media'}</button>
+                <button type="button" onClick={() => setMediaPickerOpen(open => !open)} className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded transition-colors">{mediaPickerOpen ? 'Close media' : 'Choose from media'}</button>
+                <button type="button" onClick={() => setUploadModalOpen(true)} className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded transition-colors">+ Upload New</button>
                 {formData.hero_image_url && (
                   <img 
                     src={getImageUrl(formData.hero_image_url)} 
@@ -503,6 +564,150 @@ export default function ArticleEditor() {
       </div>
     </div>
       </div>
+
+      {/* Upload Modal */}
+      {uploadModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Upload New Image</h2>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUploadModalOpen(false)
+                    setUploadFile(null)
+                    setUploadMetadata({ alt_text: '', caption: '', credit: '' })
+                  }}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Upload Area */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Image File
+                </label>
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-red-400 transition-colors"
+                  onPaste={handlePaste}
+                >
+                  {uploadFile ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-center">
+                        <img 
+                          src={URL.createObjectURL(uploadFile)} 
+                          alt="Preview" 
+                          className="max-h-48 rounded-lg"
+                        />
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {uploadFile.name} ({(uploadFile.size / 1024).toFixed(2)} KB)
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setUploadFile(null)}
+                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="text-4xl text-gray-400">📷</div>
+                      <div>
+                        <label className="cursor-pointer">
+                          <span className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors inline-block">
+                            Choose File
+                          </span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        or paste an image (Ctrl+V / Cmd+V)
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Metadata Fields */}
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Alt Text *
+                  </label>
+                  <input
+                    type="text"
+                    value={uploadMetadata.alt_text}
+                    onChange={(e) => setUploadMetadata({ ...uploadMetadata, alt_text: e.target.value })}
+                    placeholder="Descriptive text for accessibility"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Describe the image for screen readers</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Caption
+                  </label>
+                  <input
+                    type="text"
+                    value={uploadMetadata.caption}
+                    onChange={(e) => setUploadMetadata({ ...uploadMetadata, caption: e.target.value })}
+                    placeholder="Image caption (optional)"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Credit
+                  </label>
+                  <input
+                    type="text"
+                    value={uploadMetadata.credit}
+                    onChange={(e) => setUploadMetadata({ ...uploadMetadata, credit: e.target.value })}
+                    placeholder="Photo credit/source (optional)"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="flex items-center justify-end gap-4 pt-4 border-t">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUploadModalOpen(false)
+                    setUploadFile(null)
+                    setUploadMetadata({ alt_text: '', caption: '', credit: '' })
+                  }}
+                  className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleUploadMedia}
+                  disabled={!uploadFile || uploading}
+                  className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {uploading ? 'Uploading...' : 'Upload & Use Image'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

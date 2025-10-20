@@ -17,6 +17,12 @@ async function request(path, opts = {}) {
     throw new Error('Session expired. Please login again.')
   }
   
+  // Handle 403 Forbidden - insufficient permissions
+  if (resp.status === 403) {
+    window.location.href = '/unauthorized'
+    throw new Error('Access denied. You do not have permission to access this resource.')
+  }
+  
   if (!resp.ok) throw new Error(text || resp.statusText)
   try {
     return JSON.parse(text || '{}')

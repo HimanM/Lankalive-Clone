@@ -10,6 +10,8 @@ import ArticlesList from './pages/ArticlesList'
 import CategoriesManagement from './pages/CategoriesManagement'
 import TagsManagement from './pages/TagsManagement'
 import Media from './pages/Media'
+import NotFound from './pages/NotFound'
+import Unauthorized from './pages/Unauthorized'
 import Layout from './components/Layout'
 
 export default function App() {
@@ -26,6 +28,8 @@ export default function App() {
         <Route path='/admin/categories' element={<CategoriesManagement />} />
         <Route path='/admin/tags' element={<TagsManagement />} />
         <Route path='/admin/media' element={<Media />} />
+        <Route path='/unauthorized' element={<Unauthorized />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </Layout>
   )

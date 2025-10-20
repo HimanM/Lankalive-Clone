@@ -109,7 +109,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="ml-4 flex items-center gap-2">
                       <Link
-                        to={`/admin/article/${article.id}`}
+                        to={`/admin/articles/${article.id}`}
                         className="text-blue-600 hover:text-blue-800"
                         title="Edit article"
                       >
