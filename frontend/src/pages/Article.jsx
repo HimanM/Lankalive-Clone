@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../api'
+import { getImageUrl } from '../utils/image'
 
 export default function Article() {
   const { slug } = useParams()
@@ -24,7 +25,7 @@ export default function Article() {
     <article className="prose lg:prose-xl">
       <h1 className="text-3xl font-bold">{article.title}</h1>
       {article.published_at && <div className="text-sm text-gray-500">{new Date(article.published_at).toLocaleString()}</div>}
-      {article.hero_image_url && <img src={article.hero_image_url} alt={article.title} className="w-full my-4" />}
+      {article.hero_image_url && <img src={getImageUrl(article.hero_image_url)} alt={article.title} className="w-full my-4" />}
       {article.summary && <p className="text-lg text-gray-700">{article.summary}</p>}
       <div dangerouslySetInnerHTML={{ __html: article.body || '' }} />
       {article.categories && article.categories.length > 0 && (

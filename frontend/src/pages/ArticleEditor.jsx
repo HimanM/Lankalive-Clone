@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as api from '../api'
+import { getImageUrl } from '../utils/image'
 
 export default function ArticleEditor() {
   const { id } = useParams()
@@ -10,6 +11,7 @@ export default function ArticleEditor() {
   const [categories, setCategories] = useState([])
   const [tags, setTags] = useState([])
   const [media, setMedia] = useState([])
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false)
   const [loading, setLoading] = useState(!isNew)
   const [saving, setSaving] = useState(false)
 
@@ -216,13 +218,33 @@ export default function ArticleEditor() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="https://example.com/image.jpg"
             />
-            {formData.hero_image_url && (
-              <img 
-                src={formData.hero_image_url} 
-                alt="Preview" 
-                className="mt-2 w-full max-w-md h-48 object-cover rounded-lg"
-              />
-            )}
+              <div className="flex items-center gap-2 mt-2">
+                <button type="button" onClick={() => setMediaPickerOpen(open => !open)} className="px-3 py-1 bg-gray-200 rounded">{mediaPickerOpen ? 'Close media' : 'Choose from media'}</button>
+                {formData.hero_image_url && (
+                  <img 
+                    src={getImageUrl(formData.hero_image_url)} 
+                    alt="Preview" 
+                    className="w-48 h-32 object-cover rounded-lg"
+                  />
+                )}
+              </div>
+
+              {mediaPickerOpen && (
+                <div className="mt-4 border p-3 rounded bg-white">
+                  <div className="mb-2 flex gap-2">
+                    <input placeholder="Search media..." className="flex-1 border px-2 py-1" onChange={async (e) => { const q = e.target.value; const list = await api.listMedia({ q }).catch(()=>[]); setMedia(list) }} />
+                  </div>
+                  <div className="grid grid-cols-4 gap-3">
+                    {media.map(m => (
+                      <div key={m.id} className="border rounded p-2 text-center">
+                        <img src={getImageUrl(m.url)} alt={m.file_name} className="w-full h-24 object-cover mb-2" />
+                        <div className="text-xs truncate mb-2">{m.file_name}</div>
+                        <button type="button" className="px-2 py-1 bg-blue-600 text-white rounded" onClick={() => { setFormData(prev => ({...prev, hero_image_url: m.url })); setMediaPickerOpen(false) }}>Select</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
 
           {/* Category */}

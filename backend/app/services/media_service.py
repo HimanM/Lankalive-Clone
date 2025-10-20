@@ -13,8 +13,8 @@ class MediaService:
     def get(self, media_id: UUID) -> Optional[MediaAsset]:
         return self.dao.get(media_id)
 
-    def list(self, limit: int = 100, offset: int = 0) -> List[MediaAsset]:
-        return self.dao.list(limit=limit, offset=offset)
+    def list(self, limit: int = 100, offset: int = 0, q: str = None) -> List[MediaAsset]:
+        return self.dao.list(limit=limit, offset=offset, q=q)
 
     def create(self, media: MediaAsset) -> MediaAsset:
         created = self.dao.create(media)

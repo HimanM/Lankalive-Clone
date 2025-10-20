@@ -1,4 +1,4 @@
-import { getToken, authHeaders } from '../utils/auth'
+import { getToken, authHeaders, clearToken } from '../utils/auth'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'
 
@@ -6,6 +6,17 @@ async function request(path, opts = {}) {
   const url = API_BASE + path
   const resp = await fetch(url, opts)
   const text = await resp.text()
+  
+  // Handle 401 Unauthorized - token expired or invalid
+  if (resp.status === 401) {
+    clearToken()
+    // Redirect to login page if not already there
+    if (!window.location.pathname.includes('/admin')) {
+      window.location.href = '/admin'
+    }
+    throw new Error('Session expired. Please login again.')
+  }
+  
   if (!resp.ok) throw new Error(text || resp.statusText)
   try {
     return JSON.parse(text || '{}')
@@ -69,10 +80,22 @@ export function updateTag(id, t) { return request(`/api/tags/${id}`, { method: '
 export function deleteTag(id) { return request(`/api/tags/${id}`, { method: 'DELETE', headers: authHeaders() }) }
 
 // Media
-export function listMedia() { return request('/api/media/') }
-export async function uploadMedia(file) {
+export function listMedia(params = {}) {
+  const { q, limit, offset } = params
+  let url = '/api/media/'
+  const parts = []
+  if (q) parts.push(`q=${encodeURIComponent(q)}`)
+  if (limit) parts.push(`limit=${encodeURIComponent(limit)}`)
+  if (offset) parts.push(`offset=${encodeURIComponent(offset)}`)
+  if (parts.length) url += `?${parts.join('&')}`
+  return request(url)
+}
+export async function uploadMedia(file, meta = {}) {
   const fd = new FormData()
   fd.append('file', file)
+  if (meta.alt_text) fd.append('alt_text', meta.alt_text)
+  if (meta.caption) fd.append('caption', meta.caption)
+  if (meta.credit) fd.append('credit', meta.credit)
   const opts = { method: 'POST', headers: { ...authHeaders() }, body: fd }
   return request('/api/media/upload', opts)
 }

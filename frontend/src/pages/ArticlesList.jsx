@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/auth'
 import * as api from '../api'
+import { getImageUrl } from '../utils/image'
 
 export default function ArticlesList() {
   const [articles, setArticles] = useState([])
@@ -190,7 +191,7 @@ export default function ArticlesList() {
                         <div className="flex items-center">
                           {article.hero_image_url && (
                             <img
-                              src={article.hero_image_url}
+                              src={getImageUrl(article.hero_image_url)}
                               alt=""
                               className="w-12 h-12 object-cover rounded mr-3"
                             />

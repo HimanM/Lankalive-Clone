@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { getImageUrl } from '../utils/image'
 
 export default function ArticleCard({ article, variant = 'default' }) {
   if (variant === 'compact') {
@@ -8,7 +9,7 @@ export default function ArticleCard({ article, variant = 'default' }) {
         {article.hero_image_url && (
           <div className="relative overflow-hidden h-48">
             <img 
-              src={article.hero_image_url} 
+              src={getImageUrl(article.hero_image_url)} 
               alt={article.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
@@ -36,7 +37,7 @@ export default function ArticleCard({ article, variant = 'default' }) {
       {article.hero_image_url && (
         <div className="relative overflow-hidden h-56">
           <img 
-            src={article.hero_image_url} 
+            src={getImageUrl(article.hero_image_url)} 
             alt={article.title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />

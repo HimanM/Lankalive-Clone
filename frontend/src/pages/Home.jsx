@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ArticleCard from '../components/ArticleCard'
 import api from '../api'
+import { getImageUrl } from '../utils/image'
 
 export default function Home() {
   const [articles, setArticles] = useState([])
@@ -52,7 +53,7 @@ export default function Home() {
                 {featuredArticle.hero_image_url && (
                   <div className="md:w-2/3 relative overflow-hidden">
                     <img 
-                      src={featuredArticle.hero_image_url} 
+                      src={getImageUrl(featuredArticle.hero_image_url)} 
                       alt={featuredArticle.title}
                       className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-500"
                     />

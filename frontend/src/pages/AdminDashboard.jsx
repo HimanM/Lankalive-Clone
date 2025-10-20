@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getToken } from '../utils/auth'
+import { getToken, logout } from '../utils/auth'
 import * as api from '../api'
 
 export default function AdminDashboard() {
@@ -27,6 +27,11 @@ export default function AdminDashboard() {
       .finally(() => setLoading(false))
   }, [navigate])
 
+  const handleLogout = () => {
+    logout()
+    navigate('/admin/')
+  }
+
   if (loading) {
     return <div className="p-8">Loading...</div>
   }
@@ -34,9 +39,11 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">Manage your news content</p>
+        <div className="container mx-auto px-4 py-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="text-gray-600 mt-1">Manage your news content</p>
+          </div>
         </div>
       </div>
 
