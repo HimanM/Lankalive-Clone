@@ -196,17 +196,44 @@ The backend uses the `DEV` flag to determine database connection:
 
 ## VPS Deployment
 
-### Prerequisites
-- Docker and Docker Compose installed on VPS
-- Domain pointing to VPS IP (optional)
-- Open port 8080 in firewall
+### 🚀 Automated Deployment with GitHub Actions
 
-### Deployment Steps
+This project includes automated deployment via GitHub Actions. Every push to `main` branch automatically deploys to your VPS.
+
+#### Quick Setup:
+
+1. **Add GitHub Secrets** (Settings → Secrets and variables → Actions):
+   - See `SECRETS.md` for the complete list of required secrets
+   - Generate keys: `python -c "import secrets; print(secrets.token_hex(32))"`
+
+2. **Prepare VPS** (one-time setup):
+   ```bash
+   # Install Docker
+   curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+   apt install docker-compose -y
+   
+   # Clone repository
+   git clone https://github.com/HimanM/Lankalive-Clone.git
+   cd Lankalive-Clone
+   
+   # Open port 8080
+   ufw allow 8080/tcp
+   ```
+
+3. **Deploy:**
+   - Push to `main` branch, or
+   - Go to **Actions** tab → **Run workflow**
+
+4. **Access:** `http://your-domain-or-ip:8080`
+
+📚 **Full Documentation:** See `DEPLOYMENT.md` for detailed instructions and troubleshooting.
+
+### Manual Deployment Steps
 
 1. Clone repository on VPS:
 ```bash
-git clone <your-repo-url>
-cd lankalive
+git clone https://github.com/HimanM/Lankalive-Clone.git
+cd Lankalive-Clone
 ```
 
 2. Configure environment:
@@ -222,15 +249,16 @@ DOMAIN=yourdomain.com
 FLASK_ENV=production
 SECRET_KEY=<generate-strong-key>
 JWT_SECRET=<generate-strong-key>
+POSTGRES_PASSWORD=<strong-password>
 ```
 
 3. Generate secure keys:
 ```bash
 # Generate SECRET_KEY
-python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+python3 -c "import secrets; print(secrets.token_hex(32))"
 
 # Generate JWT_SECRET
-python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
 
 4. Build and deploy:

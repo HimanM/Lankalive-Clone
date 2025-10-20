@@ -63,7 +63,7 @@ services:
       # Backend API URL - internal Docker network
       VITE_API_URL: http://backend:8000
     ports:
-      - "8080:80"  # Uncommon port as requested
+      - "49155:80"  # Uncommon port as requested
     depends_on:
       - backend
     networks:
