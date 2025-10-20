@@ -6,6 +6,7 @@ from app.controllers.decorators import requires_role
 import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from PIL import Image
 
 bp = Blueprint('media', __name__, url_prefix='/api/media')
 
@@ -54,6 +55,15 @@ def upload_media():
     # Generate URL relative to static folder
     rel_path = os.path.relpath(path, os.path.join(BACKEND_DIR, 'static')).replace('\\', '/')
     rel_url = '/static/' + rel_path
+    
+    # Extract image dimensions
+    width, height = None, None
+    try:
+        with Image.open(path) as img:
+            width, height = img.size
+    except Exception as e:
+        print(f"Could not extract dimensions: {e}")
+    
     # optional metadata fields supplied as form fields
     mime_type = f.mimetype if hasattr(f, 'mimetype') else None
     alt_text = request.form.get('alt_text')
@@ -65,6 +75,8 @@ def upload_media():
         file_name=filename,
         url=rel_url,  # Already has /static/ prefix
         mime_type=mime_type,
+        width=width,
+        height=height,
         alt_text=alt_text,
         caption=caption,
         credit=credit,
@@ -77,6 +89,8 @@ def upload_media():
             'url': created.url,
             'file_name': created.file_name,
             'mime_type': created.mime_type,
+            'width': created.width,
+            'height': created.height,
             'alt_text': created.alt_text,
             'caption': created.caption,
             'credit': created.credit,

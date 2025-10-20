@@ -49,13 +49,13 @@ export default function Home() {
         {featuredArticle && (
           <section className="mb-12">
             <div className="relative bg-white rounded-lg shadow-lg overflow-hidden group cursor-pointer hover:shadow-xl transition-shadow duration-300">
-              <div className="md:flex">
+              <div className="md:flex md:h-96">
                 {featuredArticle.hero_image_url && (
-                  <div className="md:w-2/3 relative overflow-hidden">
+                  <div className="md:w-2/3 h-64 md:h-full relative overflow-hidden">
                     <img 
                       src={getImageUrl(featuredArticle.hero_image_url)} 
                       alt={featuredArticle.title}
-                      className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   </div>
