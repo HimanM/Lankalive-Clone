@@ -24,8 +24,8 @@ def list_media():
     offset = int(request.args.get('offset', 0))
     with SessionLocal() as session:
         svc = MediaService(session)
-        medias = svc.list(limit=limit, offset=offset, q=q)
-        return jsonify([
+        medias, total = svc.list_with_count(limit=limit, offset=offset, q=q)
+        items = [
             {
                 'id': str(m.id),
                 'url': m.url,
@@ -39,7 +39,8 @@ def list_media():
                 'created_at': m.created_at.isoformat() if m.created_at else None,
             }
             for m in medias
-        ])
+        ]
+        return jsonify({'items': items, 'total': total})
 
 
 @bp.route('/upload', methods=['POST'])
