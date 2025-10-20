@@ -119,7 +119,7 @@ export function listMedia(params = {}) {
   if (limit) parts.push(`limit=${encodeURIComponent(limit)}`)
   if (offset) parts.push(`offset=${encodeURIComponent(offset)}`)
   if (parts.length) url += `?${parts.join('&')}`
-  return request(url)
+  return request(url, { headers: authHeaders() })
 }
 export async function uploadMedia(file, meta = {}) {
   const fd = new FormData()
