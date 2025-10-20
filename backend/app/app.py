@@ -17,11 +17,30 @@ from app.controllers.user_controller import bp as users_bp
 from app.controllers.homepage_section_controller import bp as sections_bp
 from app.controllers.homepage_section_item_controller import bp as items_bp
 from app.controllers.auth_controller import bp as auth_bp
+from flask import request
+
+# Try to import Flask-CORS; if unavailable we'll fall back to a permissive after_request.
+try:
+    from flask_cors import CORS
+except Exception:
+    CORS = None
 
 
 def create_app():
     app = Flask(__name__, static_folder='static')
 
+    # Enable CORS for development: prefer flask_cors if installed.
+    if CORS:
+        CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+    else:
+        @app.after_request
+        def _cors_response(response):
+            # permissive CORS for local dev (adjust in production)
+            response.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*') or '*'
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+            response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Authorization,Content-Type'
+            return response
     # register blueprints
     app.register_blueprint(articles_bp)
     app.register_blueprint(auth_bp)
