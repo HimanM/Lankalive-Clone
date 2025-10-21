@@ -27,6 +27,20 @@ class ArticleService:
             date_to=date_to
         )
 
+    def list_with_count(self, limit: int = 20, offset: int = 0, category_slug: str = None, tag_slug: str = None,
+                        is_highlight: bool = None, status: Optional[str] = 'published',
+                        date_from: str = None, date_to: str = None):
+        return self.dao.list_with_count(
+            limit=limit,
+            offset=offset,
+            category_slug=category_slug,
+            tag_slug=tag_slug,
+            is_highlight=is_highlight,
+            status=status,
+            date_from=date_from,
+            date_to=date_to
+        )
+
     def create(self, article: Article) -> Article:
         created = self.dao.create(article)
         self.session.commit()

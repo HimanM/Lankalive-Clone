@@ -22,12 +22,17 @@ export default function AdminDashboard() {
       api.listCategories(),
       api.listArticles({ status: 'published', limit: 10 }) // recent published for the list
     ])
-      .then(([allArts, cats, recentPublished]) => {
-        setTotalCount(Array.isArray(allArts) ? allArts.length : 0)
-        // derive published count from the allArts result when possible
-        setPublishedCount(Array.isArray(allArts) ? allArts.filter(a => a.status === 'published').length : 0)
+      .then(([allArtsResp, cats, recentPublishedResp]) => {
+        // allArtsResp may be an array or an envelope { items, total }
+        const allItems = Array.isArray(allArtsResp) ? allArtsResp : (allArtsResp && allArtsResp.items ? allArtsResp.items : [])
+        const allTotal = (allArtsResp && typeof allArtsResp.total === 'number') ? allArtsResp.total : allItems.length
+        setTotalCount(allTotal)
+        setPublishedCount(allItems.filter(a => a.status === 'published').length)
         setCategories(cats)
-        setArticles(recentPublished)
+
+        // recentPublishedResp may also be array or envelope
+        const recent = Array.isArray(recentPublishedResp) ? recentPublishedResp : (recentPublishedResp && recentPublishedResp.items ? recentPublishedResp.items : [])
+        setArticles(recent)
       })
       .catch(console.error)
       .finally(() => setLoading(false))
