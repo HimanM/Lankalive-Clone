@@ -24,8 +24,8 @@ export default function Article() {
   if (!article) return <div className="max-w-7xl mx-auto px-4 py-8">Loading...</div>
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="max-w-7xl mx-auto px-3 md:px-4 py-4 md:py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
         {/* Main Content - 2/3 width */}
         <div className="lg:col-span-2">
           <article className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -41,7 +41,7 @@ export default function Article() {
         )}
         
         {/* Article Content */}
-        <div className="p-8">
+        <div className="p-4 md:p-6 lg:p-8">
           {/* Categories */}
           {article.categories && article.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
@@ -54,7 +54,7 @@ export default function Article() {
           )}
           
           {/* Title */}
-          <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">{article.title}</h1>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">{article.title}</h1>
           
           {/* Metadata */}
           <div className="flex items-center gap-4 text-sm text-gray-500 mb-6 pb-6 border-b border-gray-200">
@@ -74,14 +74,14 @@ export default function Article() {
           
           {/* Summary */}
           {article.summary && (
-            <p className="text-xl text-gray-700 mb-6 leading-relaxed font-medium border-l-4 border-red-600 pl-4 italic">
+            <p className="text-base md:text-lg lg:text-xl text-gray-700 mb-6 leading-relaxed font-medium border-l-4 border-red-600 pl-4 italic">
               {article.summary}
             </p>
           )}
           
           {/* Body */}
           <div 
-            className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-red-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg prose-img:shadow-md" 
+            className="prose prose-sm md:prose-base lg:prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-red-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg prose-img:shadow-md" 
             dangerouslySetInnerHTML={{ __html: article.body || '' }} 
           />
           
@@ -104,7 +104,7 @@ export default function Article() {
 
         {/* Sidebar - 1/3 width */}
         <div className="lg:col-span-1">
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <FeaturedArticles limit={3} />
             <Sidebar />
           </div>

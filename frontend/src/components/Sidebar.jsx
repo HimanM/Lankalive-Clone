@@ -26,18 +26,18 @@ export default function Sidebar() {
   }, [])
 
   return (
-    <aside className="space-y-6">
+    <aside className="space-y-4 md:space-y-6">
       {/* Categories Section */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-red-600">
+      <div className="bg-white rounded-lg shadow p-4 md:p-6">
+        <h3 className="text-base md:text-xl font-bold text-gray-900 mb-3 md:mb-4 pb-2 md:pb-3 border-b-2 border-red-600">
           Categories
         </h3>
-        <ul className="space-y-2">
+        <ul className="space-y-1 md:space-y-2">
           {categories.map(category => (
             <li key={category.id}>
               <Link
                 to={`/category/${category.slug}`}
-                className="flex items-center justify-between text-gray-700 hover:text-red-600 transition-colors py-2 px-3 hover:bg-gray-50 rounded"
+                className="flex items-center justify-between text-gray-700 hover:text-red-600 transition-colors py-1.5 md:py-2 px-2 md:px-3 hover:bg-gray-50 rounded text-sm md:text-base"
               >
                 <span className="font-medium">{category.name}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,23 +50,23 @@ export default function Sidebar() {
       </div>
 
       {/* Popular Articles Section */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-red-600">
+      <div className="bg-white rounded-lg shadow p-4 md:p-6">
+        <h3 className="text-base md:text-xl font-bold text-gray-900 mb-3 md:mb-4 pb-2 md:pb-3 border-b-2 border-red-600">
           Popular Articles
         </h3>
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {popularArticles.map((article, index) => (
-            <article key={article.id} className="border-b pb-4 last:border-0 last:pb-0">
+            <article key={article.id} className="border-b pb-3 md:pb-4 last:border-0 last:pb-0">
               <Link to={`/article/${article.slug}`} className="group">
-                <div className="flex items-start gap-3">
-                  <span className="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded flex items-center justify-center font-bold text-sm">
+                <div className="flex items-start gap-2 md:gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 bg-red-600 text-white rounded flex items-center justify-center font-bold text-xs md:text-sm">
                     {index + 1}
                   </span>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-1">
+                    <h4 className="font-semibold text-xs md:text-sm text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-1">
                       {article.title}
                     </h4>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-1.5 md:gap-2 text-xs text-gray-500">
                       {article.published_at && (
                         <time>
                           {new Date(article.published_at).toLocaleDateString()}
