@@ -89,29 +89,29 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-red-600 text-white py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold">{category.name}</h1>
-          <p className="text-red-100 mt-2">Latest news and updates</p>
+      <div className="bg-red-600 text-white py-4 md:py-6 lg:py-8">
+        <div className="container mx-auto px-3 md:px-4">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">{category.name}</h1>
+          <p className="text-red-100 mt-1 md:mt-2 text-sm md:text-base">Latest news and updates</p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
           {/* Main Content - 2/3 width */}
           <div className="lg:col-span-2">
             {/* Search and Filter Combined */}
-            <div className="bg-white rounded-lg shadow p-4 mb-6">
+            <div className="bg-white rounded-lg shadow p-3 md:p-4 mb-4 md:mb-6">
               {/* Search Bar */}
-              <div className="relative mb-3">
+              <div className="relative mb-2 md:mb-3">
                 <input
                   type="text"
                   placeholder="Search articles..."
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-3 md:px-4 py-2 md:py-3 pl-9 md:pl-10 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 />
-                <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute left-2.5 md:left-3 top-2.5 md:top-3.5 h-4 w-4 md:h-5 md:w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -177,7 +177,7 @@ export default function CategoryPage() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
                   {articles.map(article => (
                     <ArticleCard key={article.id} article={article} />
                   ))}
@@ -211,7 +211,7 @@ export default function CategoryPage() {
 
           {/* Sidebar - 1/3 width */}
           <div className="lg:col-span-1">
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <FeaturedArticles limit={3} />
               <Sidebar />
             </div>

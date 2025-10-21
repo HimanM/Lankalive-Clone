@@ -42,17 +42,17 @@ export default function FeaturedArticles({ limit = 3 }) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-4 border-l-4 border-red-600 pl-3">
+    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+      <h3 className="text-base md:text-xl font-bold text-gray-900 mb-3 md:mb-4 border-l-4 border-red-600 pl-3">
         Featured Articles
       </h3>
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {featuredArticles.map((article, index) => (
-          <article key={article.id} className={`${index !== 0 ? 'pt-4 border-t border-gray-200' : ''}`}>
+          <article key={article.id} className={`${index !== 0 ? 'pt-3 md:pt-4 border-t border-gray-200' : ''}`}>
             <Link to={`/article/${article.slug}`} className="group">
-              <div className="flex gap-3">
+              <div className="flex gap-2 md:gap-3">
                 {article.hero_image_url && (
-                  <div className="flex-shrink-0 w-20 h-20 rounded overflow-hidden">
+                  <div className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded overflow-hidden">
                     <img 
                       src={getImageUrl(article.hero_image_url)} 
                       alt={article.title}
@@ -61,7 +61,7 @@ export default function FeaturedArticles({ limit = 3 }) {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-red-600 transition-colors mb-1">
+                  <h4 className="text-xs md:text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-red-600 transition-colors mb-1">
                     {article.title}
                   </h4>
                   <time className="text-xs text-gray-500">

@@ -81,13 +81,13 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       {/* Hot News Ticker */}
       {hotNews.length > 0 && (
-        <div className="bg-red-600 text-white py-2 px-4">
-          <div className="container mx-auto flex items-center gap-4">
-            <span className="font-bold text-sm uppercase flex-shrink-0">Hot News</span>
+        <div className="bg-red-600 text-white py-2 px-3 md:px-4">
+          <div className="container mx-auto flex items-center gap-2 md:gap-4">
+            <span className="font-bold text-xs md:text-sm uppercase flex-shrink-0">Hot News</span>
             <div className="overflow-hidden flex-1">
               <div className="animate-marquee whitespace-nowrap">
                 {hotNews.map((article, idx) => (
-                  <span key={article.id} className="inline-block mx-8 text-sm">
+                  <span key={article.id} className="inline-block mx-4 md:mx-8 text-xs md:text-sm">
                     {article.title}
                   </span>
                 ))}
@@ -97,26 +97,26 @@ export default function Home() {
         </div>
       )}
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         {/* Search Bar */}
-        <div className="max-w-3xl mx-auto mb-8">
+        <div className="max-w-3xl mx-auto mb-6 md:mb-8">
           <div className="relative">
             <input
               type="text"
               placeholder="Search news articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 pl-14 text-lg border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm transition-all"
+              className="w-full px-4 md:px-6 py-3 md:py-4 pl-10 md:pl-14 text-sm md:text-base lg:text-lg border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm transition-all"
             />
-            <svg className="absolute left-5 top-5 h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute left-3 md:left-5 top-3 md:top-5 h-5 w-5 md:h-6 md:w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 md:right-4 top-3 md:top-4 text-gray-400 hover:text-gray-600"
               >
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -131,11 +131,39 @@ export default function Home() {
 
         {/* Hero Section - Featured Article */}
         {featuredArticle && (
-          <section className="mb-12">
+          <section className="mb-6 md:mb-12">
             <div className="relative bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300">
-              <div className="md:flex md:h-96">
+              {/* Mobile: Compact vertical layout */}
+              <div className="md:hidden">
                 {featuredArticle.hero_image_url && (
-                  <a href={`/article/${featuredArticle.slug}`} className="md:w-2/3 h-64 md:h-full block">
+                  <a href={`/article/${featuredArticle.slug}`} className="block">
+                    <div className="relative overflow-hidden h-40">
+                      <img 
+                        src={getImageUrl(featuredArticle.hero_image_url)} 
+                        alt={featuredArticle.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                      <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded">Featured</span>
+                    </div>
+                  </a>
+                )}
+                <div className="p-3">
+                  <a href={`/article/${featuredArticle.slug}`}>
+                    <h2 className="text-base font-bold mb-2 leading-tight text-gray-900 line-clamp-2">
+                      {featuredArticle.title}
+                    </h2>
+                  </a>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <time>{new Date(featuredArticle.published_at).toLocaleDateString()}</time>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Desktop: Original horizontal layout */}
+              <div className="hidden md:flex md:h-80 lg:h-96">
+                {featuredArticle.hero_image_url && (
+                  <a href={`/article/${featuredArticle.slug}`} className="md:w-2/3 h-full block">
                     <div className="relative overflow-hidden h-full">
                       <img 
                         src={getImageUrl(featuredArticle.hero_image_url)} 
@@ -146,14 +174,14 @@ export default function Home() {
                     </div>
                   </a>
                 )}
-                <div className="md:w-1/3 p-8 flex flex-col justify-center">
+                <div className="md:w-1/3 p-6 lg:p-8 flex flex-col justify-center">
                   <span className="text-red-600 font-semibold text-sm uppercase mb-2">Featured</span>
                   <a href={`/article/${featuredArticle.slug}`}>
-                    <h2 className="text-3xl font-bold mb-4 leading-tight text-gray-900 hover:text-red-600 transition-colors duration-200">
+                    <h2 className="text-2xl lg:text-3xl font-bold mb-4 leading-tight text-gray-900 hover:text-red-600 transition-colors duration-200">
                       {featuredArticle.title}
                     </h2>
                   </a>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{featuredArticle.summary}</p>
+                  <p className="text-base text-gray-600 mb-4 line-clamp-3">{featuredArticle.summary}</p>
                   <div className="flex items-center text-sm text-gray-500">
                     <time>{new Date(featuredArticle.published_at).toLocaleDateString()}</time>
                   </div>
@@ -164,12 +192,19 @@ export default function Home() {
         )}
 
         {/* Latest News Section */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-4">Latest News</h2>
-            <a href="/latest-news" className="text-red-600 hover:text-red-700 text-sm font-semibold uppercase">View All →</a>
+        <section className="mb-6 md:mb-12">
+          <div className="flex items-center justify-between mb-3 md:mb-6">
+            <h2 className="text-lg md:text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-3 md:pl-4">Latest News</h2>
+            <a href="/latest-news" className="text-red-600 hover:text-red-700 text-xs md:text-sm font-semibold uppercase">View All →</a>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Mobile: Show 4 articles in 2 columns */}
+          <div className="grid grid-cols-2 gap-3 md:hidden">
+            {latestArticles.slice(0, 4).map(article => (
+              <ArticleCard key={article.id} article={article} variant="compact" />
+            ))}
+          </div>
+          {/* Desktop: Show all 6 articles in 3 columns */}
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestArticles.map(article => (
               <ArticleCard key={article.id} article={article} />
             ))}
@@ -178,12 +213,19 @@ export default function Home() {
 
         {/* Category Sections */}
         {categorySections.map(({ category, articles: catArticles }) => (
-          <section className="mb-12" key={category.id}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-4">{category.name}</h2>
-              <a href={`/category/${category.slug}`} className="text-red-600 hover:text-red-700 text-sm font-semibold uppercase">View All →</a>
+          <section className="mb-6 md:mb-12" key={category.id}>
+            <div className="flex items-center justify-between mb-3 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-3 md:pl-4">{category.name}</h2>
+              <a href={`/category/${category.slug}`} className="text-red-600 hover:text-red-700 text-xs md:text-sm font-semibold uppercase">View All →</a>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Mobile: Show 4 articles in 2 columns */}
+            <div className="grid grid-cols-2 gap-3 md:hidden">
+              {catArticles.slice(0, 4).map(article => (
+                <ArticleCard key={article.id} article={article} variant="compact" />
+              ))}
+            </div>
+            {/* Desktop: Show all articles in 3 columns */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {catArticles.map(article => (
                 <ArticleCard key={article.id} article={article} />
               ))}
@@ -194,10 +236,10 @@ export default function Home() {
         {/* More News Section */}
         {moreArticles.length > 0 && (
           <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-4">More Stories</h2>
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-3 md:pl-4">More Stories</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {moreArticles.map(article => (
                 <ArticleCard key={article.id} article={article} variant="compact" />
               ))}
