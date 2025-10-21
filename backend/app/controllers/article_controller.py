@@ -27,10 +27,9 @@ def list_articles():
     
     with SessionLocal() as session:
         svc = ArticleService(session)
-        # Use list_with_count for admin/listing to support pagination
-        items, total = svc.list_with_count(
-            limit=limit,
-            offset=offset,
+        articles = svc.list(
+            limit=limit, 
+            offset=offset, 
             category_slug=category,
             tag_slug=tag,
             is_highlight=is_highlight in ['1', 'true'] if is_highlight else None,
@@ -40,7 +39,7 @@ def list_articles():
         )
         # basic serialization
         result = []
-        for a in items:
+        for a in articles:
             # Build categories list, ensuring primary_category is included
             categories = [{'id': str(c.id), 'name': c.name, 'slug': c.slug} for c in (a.categories or [])]
             
@@ -66,7 +65,7 @@ def list_articles():
                 'is_featured': a.is_featured,
             })
         
-    return jsonify({ 'items': result, 'total': total })
+        return jsonify(result)
 
 
 @bp.route('/by-id/<string:article_id>', methods=['GET'])
