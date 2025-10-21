@@ -34,8 +34,12 @@ async function request(path, opts = {}) {
     }
     
     if (!resp.ok) {
-      console.error(`API Error: ${resp.status} ${resp.statusText}`, text)
-      throw new Error(text || resp.statusText)
+      // console.error(`API Error: ${resp.status} ${resp.statusText}`, text)
+      const err = new Error(text || resp.statusText)
+      // attach HTTP status and raw text for callers to inspect
+      err.status = resp.status
+      err.body = text
+      throw err
     }
     
     try {
@@ -80,7 +84,8 @@ export function getArticle(slug) {
 }
 
 export function getArticleById(id) {
-  return request(`/api/articles/by-id/${id}`)
+  // Include auth headers so backend allows admin access to draft articles
+  return request(`/api/articles/by-id/${id}`, { headers: authHeaders() })
 }
 
 export function createArticle(article) {

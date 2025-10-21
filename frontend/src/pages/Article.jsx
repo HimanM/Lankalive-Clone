@@ -5,10 +5,12 @@ import { getImageUrl } from '../utils/image'
 import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
 import useScrollToTop from '../hooks/useScrollToTop'
+import NotFound from './NotFound'
 
 export default function Article() {
   const { slug } = useParams()
   const [article, setArticle] = useState(null)
+  const [errorStatus, setErrorStatus] = useState(null)
 
   // Scroll to top when the route/pathname (slug) changes
   useScrollToTop()
@@ -20,11 +22,16 @@ export default function Article() {
         setArticle(a)
       } catch (e) {
         console.error(e)
+        // Capture HTTP status (e.g., 404) so we can show NotFound
+        if (e && e.status) {
+          setErrorStatus(e.status)
+        }
       }
     }
     load()
   }, [slug])
 
+  if (errorStatus === 404) return <NotFound />
   if (!article) return <div className="max-w-7xl mx-auto px-4 py-8">Loading...</div>
 
   return (

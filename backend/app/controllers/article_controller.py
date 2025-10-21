@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from app.config.session import SessionLocal
 from app.services.article_service import ArticleService
 from app.models.article import Article
@@ -69,8 +69,9 @@ def list_articles():
 
 
 @bp.route('/by-id/<string:article_id>', methods=['GET'])
+@requires_role('admin')
 def get_article_by_id(article_id):
-    """Get article by UUID - for admin editing"""
+    """Get article by UUID - admin-only (for editing)"""
     from uuid import UUID
     with SessionLocal() as session:
         svc = ArticleService(session)
@@ -108,6 +109,19 @@ def get_article(slug):
         
         # Non-admin users can only view published articles
         if not is_admin() and a.status != 'published':
+            # Log unauthorized access attempt for monitoring; keep returning 404 to avoid disclosure
+            try:
+                remote = request.remote_addr
+                # decode token subject if present
+                from app.controllers.decorators import get_current_user
+                user = get_current_user()
+                sub = user.get('sub') if user else None
+                current_app.logger.warning(f"Unauthorized draft access attempt: slug={slug} remote={remote} sub={sub}")
+            except Exception:
+                try:
+                    current_app.logger.warning(f"Unauthorized draft access attempt: slug={slug} remote={request.remote_addr}")
+                except Exception:
+                    pass
             return jsonify({'error': 'not found'}), 404
         
         # serialize related fields
