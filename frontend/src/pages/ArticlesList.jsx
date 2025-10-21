@@ -8,9 +8,6 @@ import { useAlert } from '../components/AlertSystem'
 export default function ArticlesList() {
   const { success, error, showConfirm } = useAlert()
   const [articles, setArticles] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const articlesPerPage = 20
-  const [totalArticles, setTotalArticles] = useState(0)
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState({ 
@@ -27,7 +24,7 @@ export default function ArticlesList() {
       return
     }
     loadData()
-  }, [navigate, filter, currentPage])
+  }, [navigate, filter])
 
   const loadData = async () => {
     setLoading(true)
@@ -38,26 +35,15 @@ export default function ArticlesList() {
       setCategories(cats)
 
       // Load articles with filters
-  const offset = (currentPage - 1) * articlesPerPage
-  const params = { limit: articlesPerPage, offset }
+      const params = { limit: 100 }
       // Always include status, even if 'all' - backend will handle it
       params.status = filter.status
       if (filter.category) params.category = filter.category
       if (filter.dateFrom) params.dateFrom = filter.dateFrom
       if (filter.dateTo) params.dateTo = filter.dateTo
 
-      const resp = await api.listArticles(params)
-      // backend may return { items, total } or legacy array
-      if (resp && resp.items) {
-        setArticles(resp.items)
-        setTotalArticles(resp.total || 0)
-      } else if (Array.isArray(resp)) {
-        setArticles(resp)
-        setTotalArticles(resp.length)
-      } else {
-        setArticles([])
-        setTotalArticles(0)
-      }
+      const arts = await api.listArticles(params)
+      setArticles(arts)
     } catch (error) {
       console.error('Error loading articles:', error)
     } finally {
@@ -122,27 +108,6 @@ export default function ArticlesList() {
             >
               + Create Article
             </Link>
-          </div>
-        </div>
-
-        {/* Pagination */}
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-center gap-2">
-            <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Previous
-            </button>
-            <span className="px-4 py-2 text-gray-700">Page {currentPage} of {Math.max(1, Math.ceil(totalArticles / articlesPerPage))}</span>
-            <button
-              onClick={() => setCurrentPage(p => p + 1)}
-              disabled={(currentPage * articlesPerPage) >= totalArticles}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Next
-            </button>
           </div>
         </div>
       </div>

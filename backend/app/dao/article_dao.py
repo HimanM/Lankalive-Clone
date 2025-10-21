@@ -84,65 +84,6 @@ class ArticleDAO:
             .all()
         )
 
-    def list_with_count(self, limit: int = 20, offset: int = 0, category_slug: str = None,
-                        tag_slug: str = None, is_highlight: bool = None, status: Optional[str] = 'published',
-                        date_from: str = None, date_to: str = None):
-        """Return a tuple (items, total) matching the same filters as list()."""
-        # Rebuild the same query without limit/offset to count
-        query = self.session.query(Article).distinct()
-
-        if status is not None:
-            query = query.filter(Article.status == status)
-
-        if category_slug:
-            category = self.session.query(Category).filter(Category.slug == category_slug).first()
-            if category:
-                query = query.outerjoin(Article.categories).filter(
-                    or_(
-                        Category.id == category.id,
-                        Article.primary_category_id == category.id
-                    )
-                )
-            else:
-                return ([], 0)
-
-        if tag_slug:
-            from app.models.tag import Tag
-            tag = self.session.query(Tag).filter(Tag.slug == tag_slug).first()
-            if tag:
-                query = query.outerjoin(Article.tags).filter(Tag.id == tag.id)
-            else:
-                return ([], 0)
-
-        if is_highlight is not None:
-            query = query.filter(Article.is_highlight == is_highlight)
-
-        if date_from:
-            try:
-                date_from_obj = datetime.fromisoformat(date_from)
-                query = query.filter(Article.published_at >= date_from_obj)
-            except ValueError:
-                pass
-
-        if date_to:
-            try:
-                from datetime import timedelta
-                date_to_obj = datetime.fromisoformat(date_to)
-                date_to_end = date_to_obj + timedelta(days=1)
-                query = query.filter(Article.published_at < date_to_end)
-            except ValueError:
-                pass
-
-        total = query.count()
-        items = (
-            query
-            .order_by(Article.published_at.desc().nullslast(), Article.created_at.desc())
-            .limit(limit)
-            .offset(offset)
-            .all()
-        )
-        return (items, total)
-
     def create(self, article: Article) -> Article:
         self.session.add(article)
         self.session.flush()
