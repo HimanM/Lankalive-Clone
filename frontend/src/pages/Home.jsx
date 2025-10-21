@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ArticleCard from '../components/ArticleCard'
+import LoadingSpinner from '../components/LoadingSpinner'
 import api from '../api'
 import { getImageUrl } from '../utils/image'
 
@@ -7,9 +8,11 @@ export default function Home() {
   const [articles, setArticles] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [categorySections, setCategorySections] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
+      setLoading(true)
       try {
         const data = await api.listArticles({ limit: 50, status: 'published' })
         // Ensure we always have an array
@@ -46,6 +49,8 @@ export default function Home() {
       } catch (e) {
         console.error('Failed to load categories:', e)
         setCategorySections([])
+      } finally {
+        setLoading(false)
       }
     }
     load()
@@ -76,6 +81,14 @@ export default function Home() {
     .slice(0, 6)
   
   const moreArticles = filteredArticles.slice(6, 26) // Show only 20 articles (6-26)
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <LoadingSpinner text="Loading articles..." />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

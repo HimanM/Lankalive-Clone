@@ -4,6 +4,7 @@ import api from '../api'
 import { getImageUrl } from '../utils/image'
 import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
+import LoadingSpinner from '../components/LoadingSpinner'
 import useScrollToTop from '../hooks/useScrollToTop'
 import NotFound from './NotFound'
 
@@ -11,12 +12,14 @@ export default function Article() {
   const { slug } = useParams()
   const [article, setArticle] = useState(null)
   const [errorStatus, setErrorStatus] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   // Scroll to top when the route/pathname (slug) changes
   useScrollToTop()
 
   useEffect(() => {
     async function load() {
+      setLoading(true)
       try {
         const a = await api.getArticle(slug)
         setArticle(a)
@@ -26,13 +29,32 @@ export default function Article() {
         if (e && e.status) {
           setErrorStatus(e.status)
         }
+      } finally {
+        setLoading(false)
       }
     }
     load()
   }, [slug])
 
   if (errorStatus === 404) return <NotFound />
-  if (!article) return <div className="max-w-7xl mx-auto px-4 py-8">Loading...</div>
+  
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-3 md:px-4 py-4 md:py-8">
+        <LoadingSpinner text="Loading article..." />
+      </div>
+    )
+  }
+
+  if (!article) {
+    return (
+      <div className="max-w-7xl mx-auto px-3 md:px-4 py-4 md:py-8">
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">Article not found</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-3 md:px-4 py-4 md:py-8">

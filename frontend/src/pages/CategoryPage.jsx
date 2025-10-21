@@ -5,6 +5,7 @@ import * as api from '../api'
 import ArticleCard from '../components/ArticleCard'
 import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 export default function CategoryPage() {
   const { slug } = useParams()
@@ -73,16 +74,18 @@ export default function CategoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+      <div className="min-h-screen bg-gray-50">
+        <LoadingSpinner text="Loading category..." />
       </div>
     )
   }
 
   if (!category) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Category not found</div>
+      <div className="min-h-screen bg-gray-50">
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">Category not found</p>
+        </div>
       </div>
     )
   }
