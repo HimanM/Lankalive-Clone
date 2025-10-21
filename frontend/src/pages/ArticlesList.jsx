@@ -10,6 +10,8 @@ export default function ArticlesList() {
   const [articles, setArticles] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const articlesPerPage = 20
   const [filter, setFilter] = useState({ 
     status: 'all', 
     category: '',
@@ -24,7 +26,7 @@ export default function ArticlesList() {
       return
     }
     loadData()
-  }, [navigate, filter])
+  }, [navigate, filter, currentPage])
 
   const loadData = async () => {
     setLoading(true)
@@ -34,8 +36,12 @@ export default function ArticlesList() {
       ])
       setCategories(cats)
 
-      // Load articles with filters
-      const params = { limit: 100 }
+      // Load articles with filters and pagination
+      const offset = (currentPage - 1) * articlesPerPage
+      const params = { 
+        limit: articlesPerPage,
+        offset: offset
+      }
       // Always include status, even if 'all' - backend will handle it
       params.status = filter.status
       if (filter.category) params.category = filter.category
@@ -44,8 +50,9 @@ export default function ArticlesList() {
 
       const arts = await api.listArticles(params)
       setArticles(arts)
-    } catch (error) {
-      console.error('Error loading articles:', error)
+    } catch (err) {
+      console.error('Error loading articles:', err)
+      error('Failed to load articles')
     } finally {
       setLoading(false)
     }
@@ -69,24 +76,29 @@ export default function ArticlesList() {
 
   const handleStatusChange = (status) => {
     setFilter(prev => ({ ...prev, status }))
+    setCurrentPage(1) // Reset to first page when filter changes
   }
 
   const handleCategoryChange = (e) => {
     setFilter(prev => ({ ...prev, category: e.target.value }))
+    setCurrentPage(1) // Reset to first page when filter changes
   }
 
   const handleDateChange = (field, value) => {
     setFilter(prev => ({ ...prev, [field]: value }))
+    setCurrentPage(1) // Reset to first page when filter changes
   }
 
   const setQuickDateFilter = (days) => {
     const dateTo = new Date().toISOString().split('T')[0]
     const dateFrom = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     setFilter(prev => ({ ...prev, dateFrom, dateTo }))
+    setCurrentPage(1) // Reset to first page when filter changes
   }
 
   const clearDateFilter = () => {
     setFilter(prev => ({ ...prev, dateFrom: '', dateTo: '' }))
+    setCurrentPage(1) // Reset to first page when filter changes
   }
 
   if (loading) {
@@ -371,6 +383,29 @@ export default function ArticlesList() {
             </div>
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {articles.length > 0 && (
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-gray-700 text-sm">
+              Page {currentPage}
+            </span>
+            <button
+              onClick={() => setCurrentPage(p => p + 1)}
+              disabled={articles.length < articlesPerPage}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
