@@ -75,7 +75,7 @@ export default function Home() {
     .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
     .slice(0, 6)
   
-  const moreArticles = filteredArticles.slice(6)
+  const moreArticles = filteredArticles.slice(6, 26) // Show only 20 articles (6-26)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -236,10 +236,17 @@ export default function Home() {
         {/* More News Section */}
         {moreArticles.length > 0 && (
           <section>
-            <div className="flex items-center justify-between mb-4 md:mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-3 md:pl-4">More Stories</h2>
+            <div className="flex items-center justify-between mb-3 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900 border-l-4 border-red-600 pl-3 md:pl-4">More Stories</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {/* Mobile: 2 columns compact layout */}
+            <div className="grid grid-cols-2 gap-3 md:hidden">
+              {moreArticles.map(article => (
+                <ArticleCard key={article.id} article={article} variant="compact" />
+              ))}
+            </div>
+            {/* Desktop: 4 columns layout */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {moreArticles.map(article => (
                 <ArticleCard key={article.id} article={article} variant="compact" />
               ))}
