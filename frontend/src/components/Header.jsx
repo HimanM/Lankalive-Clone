@@ -13,6 +13,28 @@ export default function Header() {
     api.listCategories().then(setCategories).catch(console.error)
   }, [])
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (mobileMenuOpen && !event.target.closest('header')) {
+        setMobileMenuOpen(false)
+      }
+    }
+
+    if (mobileMenuOpen) {
+      document.addEventListener('click', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [mobileMenuOpen])
+
+  // Close mobile menu when navigating
+  const handleNavClick = () => {
+    setMobileMenuOpen(false)
+  }
+
   const handleLogout = () => {
     logout()
     navigate('/admin/')
@@ -107,24 +129,24 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t pt-4">
-            <Link to="/" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Home</Link>
+          <nav className="md:hidden mt-4 pb-4 flex flex-col gap-2 border-t pt-4">
+            <Link to="/" onClick={handleNavClick} className="text-gray-700 hover:bg-red-100 hover:text-red-600 active:bg-red-200 active:text-red-700 font-medium transition-colors px-3 py-2 rounded-lg">Home</Link>
             {!logged && (
-              <Link to="/latest-news" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Latest News</Link>
+              <Link to="/latest-news" onClick={handleNavClick} className="text-gray-700 hover:bg-red-100 hover:text-red-600 active:bg-red-200 active:text-red-700 font-medium transition-colors px-3 py-2 rounded-lg">Latest News</Link>
             )}
             {logged ? (
               <>
-                <Link to="/admin/articles/new" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Create Article</Link>
-                <Link to="/admin/articles" className="text-gray-700 hover:text-red-600 font-medium transition-colors">All Articles</Link>
-                <Link to="/admin/categories" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Categories</Link>
-                <Link to="/admin/media" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Media</Link>
-                <Link to="/admin/tags" className="text-gray-700 hover:text-red-600 font-medium transition-colors">Tags</Link>
-                <Link to="/admin/dashboard" className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-center">
+                <Link to="/admin/articles/new" onClick={handleNavClick} className="text-gray-700 hover:bg-red-100 hover:text-red-600 active:bg-red-200 active:text-red-700 font-medium transition-colors px-3 py-2 rounded-lg">Create Article</Link>
+                <Link to="/admin/articles" onClick={handleNavClick} className="text-gray-700 hover:bg-red-100 hover:text-red-600 active:bg-red-200 active:text-red-700 font-medium transition-colors px-3 py-2 rounded-lg">All Articles</Link>
+                <Link to="/admin/categories" onClick={handleNavClick} className="text-gray-700 hover:bg-red-100 hover:text-red-600 active:bg-red-200 active:text-red-700 font-medium transition-colors px-3 py-2 rounded-lg">Categories</Link>
+                <Link to="/admin/media" onClick={handleNavClick} className="text-gray-700 hover:bg-red-100 hover:text-red-600 active:bg-red-200 active:text-red-700 font-medium transition-colors px-3 py-2 rounded-lg">Media</Link>
+                <Link to="/admin/tags" onClick={handleNavClick} className="text-gray-700 hover:bg-red-100 hover:text-red-600 active:bg-red-200 active:text-red-700 font-medium transition-colors px-3 py-2 rounded-lg">Tags</Link>
+                <Link to="/admin/dashboard" onClick={handleNavClick} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors font-medium text-center">
                   Dashboard
                 </Link>
                 <button 
-                  onClick={handleLogout}
-                  className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                  onClick={() => { handleLogout(); handleNavClick(); }}
+                  className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 active:bg-gray-800 transition-colors font-medium"
                 >
                   Logout
                 </button>
@@ -134,13 +156,14 @@ export default function Header() {
                 {categories.map(cat => (
                   <Link 
                     key={cat.id} 
-                    to={`/category/${cat.slug}`} 
-                    className="text-gray-700 hover:text-red-600 font-medium transition-colors"
+                    to={`/category/${cat.slug}`}
+                    onClick={handleNavClick}
+                    className="text-gray-700 hover:bg-red-100 hover:text-red-600 active:bg-red-200 active:text-red-700 font-medium transition-colors px-3 py-2 rounded-lg"
                   >
                     {cat.name}
                   </Link>
                 ))}
-                <Link to="/admin/" className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-center">
+                <Link to="/admin/" onClick={handleNavClick} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors font-medium text-center">
                   Login
                 </Link>
               </>
