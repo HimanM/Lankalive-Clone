@@ -4,10 +4,14 @@ import api from '../api'
 import { getImageUrl } from '../utils/image'
 import Sidebar from '../components/Sidebar'
 import FeaturedArticles from '../components/FeaturedArticles'
+import useScrollToTop from '../hooks/useScrollToTop'
 
 export default function Article() {
   const { slug } = useParams()
   const [article, setArticle] = useState(null)
+
+  // Scroll to top when the route/pathname (slug) changes
+  useScrollToTop()
 
   useEffect(() => {
     async function load() {
