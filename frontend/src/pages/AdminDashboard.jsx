@@ -5,6 +5,8 @@ import * as api from '../api'
 
 export default function AdminDashboard() {
   const [articles, setArticles] = useState([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [publishedCount, setPublishedCount] = useState(0)
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
@@ -16,12 +18,16 @@ export default function AdminDashboard() {
     }
 
     Promise.all([
-      api.listArticles({ status: 'published', limit: 10 }),
-      api.listCategories()
+      api.listArticles({ status: 'all', limit: 100 }), // retrieve all for admin total
+      api.listCategories(),
+      api.listArticles({ status: 'published', limit: 10 }) // recent published for the list
     ])
-      .then(([arts, cats]) => {
-        setArticles(arts)
+      .then(([allArts, cats, recentPublished]) => {
+        setTotalCount(Array.isArray(allArts) ? allArts.length : 0)
+        // derive published count from the allArts result when possible
+        setPublishedCount(Array.isArray(allArts) ? allArts.filter(a => a.status === 'published').length : 0)
         setCategories(cats)
+        setArticles(recentPublished)
       })
       .catch(console.error)
       .finally(() => setLoading(false))
@@ -52,7 +58,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="text-gray-500 text-sm font-medium">Total Articles</div>
-            <div className="text-3xl font-bold text-gray-900 mt-2">{articles.length}</div>
+            <div className="text-3xl font-bold text-gray-900 mt-2">{totalCount}</div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="text-gray-500 text-sm font-medium">Categories</div>
@@ -60,7 +66,7 @@ export default function AdminDashboard() {
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="text-gray-500 text-sm font-medium">Published</div>
-            <div className="text-3xl font-bold text-green-600 mt-2">{articles.length}</div>
+            <div className="text-3xl font-bold text-green-600 mt-2">{publishedCount}</div>
           </div>
         </div>
 
