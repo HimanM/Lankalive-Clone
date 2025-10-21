@@ -16,27 +16,30 @@ import Media from './pages/Media'
 import NotFound from './pages/NotFound'
 import Unauthorized from './pages/Unauthorized'
 import Layout from './components/Layout'
+import { AlertProvider } from './components/AlertSystem'
 
 export default function App() {
   return (
-    <Layout>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/article/:slug' element={<Article />} />
-        <Route path='/category/:slug' element={<CategoryPage />} />
-        <Route path='/latest-news' element={<LatestNews />} />
-        <Route path='/privacy-policy' element={<PrivacyPolicy />} />
-        <Route path='/terms-of-service' element={<TermsOfService />} />
-        <Route path='/admin' element={<Admin />} />
-        <Route path='/admin/dashboard' element={<AdminDashboard />} />
-        <Route path='/admin/articles' element={<ArticlesList />} />
-        <Route path='/admin/articles/:id' element={<ArticleEditor />} />
-        <Route path='/admin/categories' element={<CategoriesManagement />} />
-        <Route path='/admin/tags' element={<TagsManagement />} />
-        <Route path='/admin/media' element={<Media />} />
-        <Route path='/unauthorized' element={<Unauthorized />} />
-        <Route path='*' element={<NotFound />} />
-      </Routes>
-    </Layout>
+    <AlertProvider>
+      <Layout>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/article/:slug' element={<Article />} />
+          <Route path='/category/:slug' element={<CategoryPage />} />
+          <Route path='/latest-news' element={<LatestNews />} />
+          <Route path='/privacy-policy' element={<PrivacyPolicy />} />
+          <Route path='/terms-of-service' element={<TermsOfService />} />
+          <Route path='/admin' element={<Admin />} />
+          <Route path='/admin/dashboard' element={<AdminDashboard />} />
+          <Route path='/admin/articles' element={<ArticlesList />} />
+          <Route path='/admin/articles/:id' element={<ArticleEditor />} />
+          <Route path='/admin/categories' element={<CategoriesManagement />} />
+          <Route path='/admin/tags' element={<TagsManagement />} />
+          <Route path='/admin/media' element={<Media />} />
+          <Route path='/unauthorized' element={<Unauthorized />} />
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </Layout>
+    </AlertProvider>
   )
 }

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/auth'
 import * as api from '../api'
+import { useAlert } from '../components/AlertSystem'
 
 export default function TagsManagement() {
+  const { success, error, showConfirm } = useAlert()
   const [tags, setTags] = useState([])
   const [selectedTag, setSelectedTag] = useState(null)
   const [recentArticles, setRecentArticles] = useState([])
@@ -60,29 +62,36 @@ export default function TagsManagement() {
     try {
       if (editingId) {
         await api.updateTag(editingId, formData)
+        success('Tag updated successfully')
       } else {
         await api.createTag(formData)
+        success('Tag created successfully')
       }
       setShowForm(false)
       setFormData({ name: '', slug: '' })
       setEditingId(null)
       loadTags()
-    } catch (e) {
-      alert('Error: ' + (e.message || e))
+    } catch (err) {
+      error('Error: ' + (err.message || err))
     }
   }
 
   async function handleDelete(tagId) {
-    if (!confirm('Delete this tag? This cannot be undone.')) return
+    const confirmed = await showConfirm('Delete this tag? This cannot be undone.', {
+      confirmText: 'Delete',
+      type: 'danger'
+    })
+    if (!confirmed) return
     try {
       await api.deleteTag(tagId)
+      success('Tag deleted successfully')
       loadTags()
       if (selectedTag?.id === tagId) {
         setSelectedTag(null)
         setRecentArticles([])
       }
-    } catch (e) {
-      alert('Error: ' + (e.message || e))
+    } catch (err) {
+      error('Error: ' + (err.message || err))
     }
   }
 
