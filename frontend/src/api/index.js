@@ -12,6 +12,9 @@ const API_BASE = (() => {
 
 async function request(path, opts = {}) {
   const url = API_BASE + path
+  // Ensure auth header is included by default if a token exists
+  opts = opts || {}
+  opts.headers = { ...(opts.headers || {}), ...authHeaders() }
   
   try {
     const resp = await fetch(url, opts)
