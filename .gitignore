@@ -21,3 +21,7 @@ SECRETS.md
 /CLEAN_DEPLOY.md
 quick-deploy.sh
 UPDATE_NOTES.md
+.vscode/settings.json
+frontend/src/components/AlertSystem.README.md
+frontend/src/pages/AlertDemo.jsx
+ALERT_SYSTEM_IMPLEMENTATION.md

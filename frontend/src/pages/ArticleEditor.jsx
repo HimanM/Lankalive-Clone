@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as api from '../api'
 import { getImageUrl } from '../utils/image'
+import { useAlert } from '../components/AlertSystem'
 
 export default function ArticleEditor() {
   const { id } = useParams()
   const navigate = useNavigate()
   const isNew = id === 'new'
+  const { success, error } = useAlert()
 
   const [categories, setCategories] = useState([])
   const [tags, setTags] = useState([])
@@ -130,7 +132,7 @@ export default function ArticleEditor() {
 
   const handleUploadMedia = async () => {
     if (!uploadFile) {
-      alert('Please select or paste an image')
+      error('Please select or paste an image')
       return
     }
 
@@ -150,9 +152,9 @@ export default function ArticleEditor() {
       setUploadFile(null)
       setUploadMetadata({ alt_text: '', caption: '', credit: '' })
       
-      alert('Image uploaded successfully!')
-    } catch (error) {
-      alert('Upload failed: ' + error.message)
+      success('Image uploaded successfully!')
+    } catch (err) {
+      error('Upload failed: ' + err.message)
     } finally {
       setUploading(false)
     }
@@ -187,14 +189,14 @@ export default function ArticleEditor() {
     try {
       if (isNew) {
         await api.createArticle(formData)
-        alert('Article created successfully!')
+        success('Article created successfully!')
       } else {
         await api.updateArticle(id, formData)
-        alert('Article updated successfully!')
+        success('Article updated successfully!')
       }
       navigate('/admin/dashboard')
-    } catch (error) {
-      alert('Error saving article: ' + error.message)
+    } catch (err) {
+      error('Error saving article: ' + err.message)
     } finally {
       setSaving(false)
     }

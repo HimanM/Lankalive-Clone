@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import api from '../api'
 import { getImageUrl } from '../utils/image'
+import { useAlert } from '../components/AlertSystem'
 
 export default function Media(){
+  const { success, error } = useAlert()
   const [list, setList] = useState([])
   const [file, setFile] = useState(null)
   const [q, setQ] = useState('')
@@ -45,17 +47,22 @@ export default function Media(){
 
   async function onUpload(e){
     e.preventDefault();
-    if(!file) return alert('select file')
+    if(!file) {
+      error('Please select a file')
+      return
+    }
     setLoading(true)
     try{
       const result = await api.uploadMedia(file, metadata)
       setFile(null)
       setMetadata({ alt_text: '', caption: '', credit: '' })
       setMessage({text: 'Upload successful', meta: result})
+      success('Media uploaded successfully')
       // reload current page after upload
       await load(q, currentPage)
-    }catch(e){
-      setMessage({text: 'Upload failed: ' + (e.message||e)})
+    }catch(err){
+      setMessage({text: 'Upload failed: ' + (err.message||err)})
+      error('Upload failed: ' + (err.message||err))
     }finally{ setLoading(false) }
   }
 

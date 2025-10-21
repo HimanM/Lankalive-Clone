@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/auth'
 import * as api from '../api'
 import { getImageUrl } from '../utils/image'
+import { useAlert } from '../components/AlertSystem'
 
 export default function ArticlesList() {
+  const { success, error, showConfirm } = useAlert()
   const [articles, setArticles] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
@@ -50,14 +52,18 @@ export default function ArticlesList() {
   }
 
   const handleDelete = async (id, title) => {
-    if (!confirm(`Are you sure you want to delete "${title}"?`)) return
+    const confirmed = await showConfirm(`Are you sure you want to delete "${title}"?`, {
+      confirmText: 'Delete',
+      type: 'danger'
+    })
+    if (!confirmed) return
     
     try {
       await api.deleteArticle(id)
-      alert('Article deleted successfully!')
+      success('Article deleted successfully!')
       loadData()
-    } catch (error) {
-      alert('Error deleting article: ' + error.message)
+    } catch (err) {
+      error('Error deleting article: ' + err.message)
     }
   }
 

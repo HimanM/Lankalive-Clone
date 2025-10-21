@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/auth'
 import * as api from '../api'
+import { useAlert } from '../components/AlertSystem'
 
 export default function CategoriesManagement() {
+  const { success, error, showConfirm } = useAlert()
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [recentArticles, setRecentArticles] = useState([])
@@ -59,29 +61,36 @@ export default function CategoriesManagement() {
     try {
       if (editingId) {
         await api.updateCategory(editingId, formData)
+        success('Category updated successfully')
       } else {
         await api.createCategory(formData)
+        success('Category created successfully')
       }
       setShowForm(false)
       setFormData({ name: '', slug: '' })
       setEditingId(null)
       loadCategories()
-    } catch (e) {
-      alert('Error: ' + (e.message || e))
+    } catch (err) {
+      error('Error: ' + (err.message || err))
     }
   }
 
   async function handleDelete(categoryId) {
-    if (!confirm('Delete this category? This cannot be undone.')) return
+    const confirmed = await showConfirm('Delete this category? This cannot be undone.', {
+      confirmText: 'Delete',
+      type: 'danger'
+    })
+    if (!confirmed) return
     try {
       await api.deleteCategory(categoryId)
+      success('Category deleted successfully')
       loadCategories()
       if (selectedCategory?.id === categoryId) {
         setSelectedCategory(null)
         setRecentArticles([])
       }
-    } catch (e) {
-      alert('Error: ' + (e.message || e))
+    } catch (err) {
+      error('Error: ' + (err.message || err))
     }
   }
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import api from '../api'
+import { useAlert } from '../components/AlertSystem'
 
 export default function Users(){
+  const { success, error } = useAlert()
   const [name,setName]=useState(''); const [email,setEmail]=useState(''); const [pw,setPw]=useState('')
-  async function onCreate(e){ e.preventDefault(); try{ await api.createUser({name,email,password_hash:pw}); setName(''); setEmail(''); setPw(''); alert('created') }catch(e){alert('create failed')} }
+  async function onCreate(e){ e.preventDefault(); try{ await api.createUser({name,email,password_hash:pw}); setName(''); setEmail(''); setPw(''); success('User created successfully') }catch(err){error('Create failed: ' + (err.message || err))} }
   return (<div>
     <h1 className='text-2xl font-bold mb-4'>Users</h1>
     <form onSubmit={onCreate} className='space-y-2 max-w-md'>
