@@ -99,7 +99,7 @@ export default function Sidebar() {
           rel="noopener noreferrer"
         >
           <img 
-            src="/ads/sidebar-ad.svg" 
+            src="/ads/cat_ad.jpg" 
             alt="Advertisement - Hire Me!" 
             className="w-full h-auto"
           />
